@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import { contactsRouter } from './contacts.js';
-import { authRouter } from './auth.js';
-import { authorization } from '../middlewares/authenticate.js';
 
 const router = Router();
 
-router.use('/contacts', authorization, contactsRouter);
-router.use('/auth', authRouter);
+// router.use('/api/users');
+// router.use('/api/stories');
+// router.use('/api/auth');
 
 export default router;

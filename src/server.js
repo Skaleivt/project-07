@@ -6,8 +6,8 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
 import cookieParser from 'cookie-parser';
-import path from 'node:path';
-import { swaggerDocs } from './middlewares/swaggerDocs.js';
+// import path from 'node:path';
+// import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 dotenv.config();
 
@@ -25,8 +25,8 @@ export const setupServer = () => {
     }),
   );
   app.use(cookieParser());
-  app.use('/photo', express.static(path.resolve('src', 'uploads', 'photo')));
-  app.use('/api-docs', swaggerDocs());
+  // app.use('/photo', express.static(path.resolve('src', 'uploads', 'photo')));
+  // app.use('/api-docs', swaggerDocs());
   app.use(router);
   app.use(notFoundHandler);
   app.use(errorHandler);
