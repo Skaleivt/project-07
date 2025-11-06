@@ -1,0 +1,15 @@
+description: Unauthorized — missing or invalid token
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: Unauthorized — Missing or invalid authentication token.
+        details:
+          type: string
+          example: Please provide a valid Bearer token in the Authorization header.

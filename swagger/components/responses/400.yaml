@@ -1,0 +1,15 @@
+description: Invalid request data
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Bad Request — Invalid data format or missing required fields.
+        details:
+          type: string
+          example: The field "email" must be a valid email address.
