@@ -20,17 +20,25 @@ const createSession = async (userId) => {
 };
 
 const setupSession = (res, session) => {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  };
+
   res.cookie('accessToken', session.accessToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + FIFTEEN_MINUTES),
+    ...cookieOptions,
+    maxAge: FIFTEEN_MINUTES,
   });
+
   res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + SEVEN_DAYS),
+    ...cookieOptions,
+    maxAge: SEVEN_DAYS,
   });
+
   res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: new Date(Date.now() + SEVEN_DAYS),
+    ...cookieOptions,
+    maxAge: SEVEN_DAYS,
   });
 };
 
@@ -46,6 +54,7 @@ export const userRegisterController = async (req, res) => {
     data: user,
   });
 };
+
 export const userLoginController = async (req, res) => {
   const user = await userLoginService(req.body);
   await SessionCollection.deleteOne({ userId: user._id });
@@ -55,7 +64,10 @@ export const userLoginController = async (req, res) => {
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully logged in!',
-    data: user,
+    message: 'Successfully logged in an user!',
+    data: {
+      accessToken: newSession.accessToken,
+      refreshToken: newSession.refreshToken,
+    },
   });
 };
