@@ -1,0 +1,91 @@
+tags:
+  - Auth
+summary: Register a new user
+operationId: registerUser
+description: Register a new user with name, email, password, and optional profile data.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+        properties:
+          name:
+            type: string
+            example: John Doe
+          email:
+            type: string
+            format: email
+            example: john@example.com
+          password:
+            type: string
+            format: password
+            example: strongPassword123
+          avatarUrl:
+            type: string
+            format: uri
+            example: https://example.com/avatars/john.png
+          articlesAmount:
+            type: integer
+            example: 0
+          description:
+            type: string
+            example: Frontend developer from Kyiv.
+responses:
+  '201':
+    description: User registered successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: success
+            data:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: 65e4decdd286b30065d54af9
+                    name:
+                      type: string
+                      example: John Doe
+                    email:
+                      type: string
+                      example: john@example.com
+                    avatarUrl:
+                      type: string
+                      example: https://example.com/avatars/john.png
+                    articlesAmount:
+                      type: integer
+                      example: 0
+                    description:
+                      type: string
+                      example: Frontend developer from Kyiv.
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: 2025-11-06T12:45:00.000Z
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '409':
+    description: Email already exists
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: error
+            message:
+              type: string
+              example: Email already in use
