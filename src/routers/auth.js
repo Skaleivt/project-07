@@ -11,4 +11,4 @@ router.post(
   userRegisterController,
 );
 
-export default router;
+export const authRouter = router;

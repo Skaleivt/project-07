@@ -17,7 +17,7 @@ const userSchema = new Schema(
     },
     avatarUrl: {
       type: String,
-      require: false,
+      required: false,
     },
     articlesAmount: {
       type: Number,
@@ -27,6 +27,12 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+    selectedStories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'stories',
+      },
+    ],
   },
   {
     timestamps: true,
