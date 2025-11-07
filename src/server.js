@@ -28,6 +28,7 @@ export const setupServer = () => {
   // app.use('/photo', express.static(path.resolve('src', 'uploads', 'photo')));
   // app.use('/api-docs', swaggerDocs());
   app.use(router);
+  // app.use('/api', router);
   app.use(notFoundHandler);
   app.use(errorHandler);
 
