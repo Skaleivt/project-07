@@ -10,3 +10,11 @@ export async function getUserProfile(userId) {
 
   return user;
 }
+
+export const deleteStoryFromSaved = async (storyId, userId) => {
+  const contact = await UsersCollection.findOneAndDelete({
+    _id: storyId,
+    userId,
+  });
+  return contact;
+};
