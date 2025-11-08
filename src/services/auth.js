@@ -4,6 +4,7 @@ import createHttpError from 'http-errors';
 
 import { UsersCollection } from '../db/models/users.js';
 import { SessionCollection } from '../db/models/sessions.js';
+import { createSession } from '../controllers/auth.js';
 
 // ===== Реєстрація користувача =====
 export const userRegisterService = async (body) => {
@@ -58,3 +59,26 @@ export async function loginUser(email, password) {
     refreshTokenValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
 }
+export const refreshUserSession = async (sessionId, refreshToken) => {
+  const session = await SessionCollection.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Refresh token expired');
+  }
+
+  await SessionCollection.deleteOne({ _id: sessionId, refreshToken });
+
+  const newSession = await createSession();
+
+  return newSession;
+};

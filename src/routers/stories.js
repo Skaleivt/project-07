@@ -1,10 +1,10 @@
-import express from 'express';
+import { Router } from 'express';
 import { createStoryController } from '../controllers/stories.js';
 import { authorization } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { createStoryValidationSchema } from '../validation/stories.js';
 
-const router = express.Router();
+const router = Router();
 
 router.post(
   '/',

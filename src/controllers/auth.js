@@ -1,9 +1,13 @@
 import { randomBytes } from 'crypto';
 import { FIFTEEN_MINUTES, SEVEN_DAYS } from '../constants/index.js';
-import { userRegisterService, userLoginService } from '../services/auth.js';
+import {
+  userRegisterService,
+  userLoginService,
+  refreshUserSession,
+} from '../services/auth.js';
 import { SessionCollection } from '../db/models/sessions.js';
 
-const createSession = async (userId) => {
+export const createSession = async (userId) => {
   const accessToken = randomBytes(32).toString('base64');
   const refreshToken = randomBytes(32).toString('base64');
 
@@ -69,5 +73,17 @@ export const userLoginController = async (req, res) => {
       accessToken: newSession.accessToken,
       refreshToken: newSession.refreshToken,
     },
+  });
+};
+
+export const refreshUserSessionController = async (req, res) => {
+  const { sessionId, refreshToken } = req.cookies;
+
+  const newSession = await refreshUserSession(sessionId, refreshToken);
+  setupSession(res, newSession);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully refreshed!',
   });
 };
