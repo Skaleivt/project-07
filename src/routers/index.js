@@ -8,5 +8,4 @@ router.use('/api/auth', authRouter);
 router.use('/api/users', userRouter);
 router.use('/api/stories', storiesRouter);
 
-
 export default router;
