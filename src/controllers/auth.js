@@ -1,3 +1,5 @@
+// src/controllers/auth.js
+
 import { randomBytes } from 'crypto';
 import { FIFTEEN_MINUTES, SEVEN_DAYS } from '../constants/index.js';
 import { userRegisterService, userLoginService } from '../services/auth.js';
@@ -46,8 +48,11 @@ export const userRegisterController = async (req, res) => {
     data: user,
   });
 };
+
 export const userLoginController = async (req, res) => {
+  // Restored original login logic
   const user = await userLoginService(req.body);
+
   await SessionCollection.deleteOne({ userId: user._id });
 
   const newSession = await createSession(user._id);

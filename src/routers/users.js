@@ -1,9 +1,16 @@
+// src/routers/users.js
+
 import { Router } from 'express';
-// import { authorization } from '../middlewares/authenticate.js';
-import { getUserProfileController } from '../controllers/users.js';
+import { authorization } from '../middlewares/authenticate.js';
+import {
+  getUserProfileController,
+  addStoryToSavedController,
+} from '../controllers/users.js';
 
 const router = new Router();
 
-router.get('/', getUserProfileController);
+router.get('/', authorization, getUserProfileController);
+
+router.post('/saved', authorization, addStoryToSavedController);
 
 export const userRouter = router;
