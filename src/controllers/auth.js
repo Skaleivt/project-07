@@ -24,29 +24,23 @@ export const createSession = async (userId) => {
 };
 
 const setupSession = (res, session) => {
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-  };
-
   res.cookie('accessToken', session.accessToken, {
-    ...cookieOptions,
-    maxAge: FIFTEEN_MINUTES,
+    httpOnly: true,
+    expired: new Date(Date.now() + FIFTEEN_MINUTES),
   });
 
   res.cookie('refreshToken', session.refreshToken, {
-    ...cookieOptions,
-    maxAge: SEVEN_DAYS,
+    httpOnly: true,
+    expired: new Date(Date.now() + SEVEN_DAYS),
   });
 
   res.cookie('sessionId', session._id, {
-    ...cookieOptions,
-    maxAge: SEVEN_DAYS,
+    httpOnly: true,
+    expired: new Date(Date.now() + SEVEN_DAYS),
   });
 };
 
-export const userRegisterController = async (req, res) => {
+export const registerUserController = async (req, res) => {
   const user = await userRegisterService(req.body);
 
   const newSession = await createSession(user._id);
@@ -59,7 +53,7 @@ export const userRegisterController = async (req, res) => {
   });
 };
 
-export const userLoginController = async (req, res) => {
+export const loginUserController = async (req, res) => {
   const user = await userLoginService(req.body);
   await SessionCollection.deleteOne({ userId: user._id });
 
@@ -69,10 +63,7 @@ export const userLoginController = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully logged in an user!',
-    data: {
-      accessToken: newSession.accessToken,
-      refreshToken: newSession.refreshToken,
-    },
+    data: user,
   });
 };
 
