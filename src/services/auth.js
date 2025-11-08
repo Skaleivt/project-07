@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
+import { SessionCollection } from '../db/models/sessions.js';
+import { createSession } from '../controllers/auth.js';
 
 export const userRegisterService = async (body) => {
   const user = await UsersCollection.findOne({ email: body.email });
@@ -27,4 +29,28 @@ export const userLoginService = async (payload) => {
   }
 
   return user;
+};
+
+export const refreshUserSession = async (sessionId, refreshToken) => {
+  const session = await SessionCollection.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Refresh token expired');
+  }
+
+  await SessionCollection.deleteOne({ _id: sessionId, refreshToken });
+
+  const newSession = await createSession();
+
+  return newSession;
 };
