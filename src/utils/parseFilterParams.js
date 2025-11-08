@@ -1,3 +1,5 @@
+import { categoriesCollection } from '../db/models/categories.js';
+
 const parseType = (type) => {
   if (typeof type === 'string') {
     const isType = (type) => ['personal', 'home', 'work'].includes(type.trim());
@@ -23,4 +25,14 @@ export const parseFilterParams = (query) => {
     type: parsedType,
     isFavourite: parsedIsFavourite,
   };
+};
+
+export const parseFilterCategoryParams = async (query) => {
+  const { category } = query;
+  if (!category) return {};
+  const isValid = ['Європа', 'Азія', 'Пустелі', 'Африка'].includes(category);
+  if (!isValid) return {};
+  const foundCategory = await categoriesCollection.findOne({ name: category });
+  if (!foundCategory) return {};
+  return { category: foundCategory._id };
 };
