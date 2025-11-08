@@ -6,6 +6,7 @@ import {
   refreshUserSession,
 } from '../services/auth.js';
 import { SessionCollection } from '../db/models/sessions.js';
+import createHttpError from 'http-errors';
 
 export const createSession = async (userId) => {
   const accessToken = randomBytes(32).toString('base64');
@@ -74,4 +75,33 @@ export const refreshUserSessionController = async (req, res) => {
     status: 200,
     message: 'Successfully refreshed!',
   });
+};
+
+export const userLogoutController = async (req, res, next) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      throw createHttpError(401, 'Unauthorized');
+    }
+
+    const { accessToken } = req.cookies;
+    if (accessToken) {
+      await SessionCollection.deleteOne({ userId, accessToken });
+    }
+
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    };
+
+    res.clearCookie('accessToken', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+    res.clearCookie('sessionId', cookieOptions);
+
+    return res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
 };
