@@ -8,16 +8,16 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     avatarUrl: {
       type: String,
-      require: false,
+      required: false,
     },
     articlesAmount: {
       type: Number,
@@ -27,6 +27,12 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+    selectedStories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'stories',
+      },
+    ],
   },
   {
     timestamps: true,

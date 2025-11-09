@@ -1,5 +1,5 @@
-export const FIFTEEN_MINUTES = 1000 * 60 * 15;
-export const ONE_DAY = 1000 * 3600 * 24;
+export const FIFTEEN_MINUTES = 1000 * 60;
+export const SEVEN_DAYS = 1000 * 3600 * 24 * 7;
 
 export const SMTP = {
   SMTP_HOST: 'SMTP_HOST',
