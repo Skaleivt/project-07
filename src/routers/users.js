@@ -1,12 +1,3 @@
-import { Router } from 'express';
-import { authorization } from '../middlewares/authenticate.js';
-import { getUserProfileController } from '../controllers/users.js';
-
-const router = new Router();
-
-router.get('/', authorization, getUserProfileController);
-
-export const userRouter = router;
 // src/routers/users.js
 import { Router } from 'express';
 import { getUserById, getAllUsers } from '../controllers/users.js';
@@ -26,3 +17,11 @@ router.get('/', getAllUsers);
 router.get('/:id', getUserById);
 
 export default router;
+import { authorization } from '../middlewares/authenticate.js';
+import { getUserProfileController } from '../controllers/users.js';
+
+// const router = new Router();
+
+router.get('/', authorization, getUserProfileController);
+
+export const userRouter = router;
