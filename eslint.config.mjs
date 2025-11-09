@@ -4,12 +4,18 @@ import pluginJs from '@eslint/js';
 export default [
   pluginJs.configs.recommended,
   {
-    files: ['src/**/*.js'],
-    languageOptions: { globals: globals.node },
+    files: ['**/*.js'], // всі JS-файли в проекті
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        ...globals.node, // додає Node.js глобали (console, process, Buffer)
+      },
+    },
     rules: {
-      semi: 'error',
+      semi: ['error', 'always'],
       'no-unused-vars': ['error', { args: 'none' }],
       'no-undef': 'error',
+      'no-console': 'off', // дозволяє console.log
     },
   },
 ];
