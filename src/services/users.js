@@ -10,3 +10,18 @@ export async function getUserProfile(userId) {
 
   return user;
 }
+
+export async function updateCurrentUser(userId, payload) {
+  const updatedUser = await UsersCollection.findOneAndUpdate(
+    { _id: userId },
+    payload,
+    {
+      new: true,
+    },
+  ).select('-password');
+
+  if (!updatedUser) {
+    throw createHttpError(404, 'User not found');
+  }
+  return updatedUser;
+}
