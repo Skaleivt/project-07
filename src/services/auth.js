@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
+
 import { UsersCollection } from '../db/models/users.js';
 import { SessionCollection } from '../db/models/sessions.js';
 import { createSession } from '../controllers/auth.js';
@@ -20,12 +21,12 @@ export const userLoginService = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
 
   if (!user) {
-    throw createHttpError(401, 'Invalid credentials');
+    throw createHttpError(401, 'Email or password is incorrect');
   }
 
   const isPasswordValid = bcrypt.compare(payload.password, user.password);
   if (!isPasswordValid) {
-    throw createHttpError(401, 'Invalid credentials');
+    throw createHttpError(401, 'Email or password is incorrect');
   }
 
   return user;
