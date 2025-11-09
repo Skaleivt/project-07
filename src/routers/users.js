@@ -20,7 +20,6 @@ export default router;
 import { authorization } from '../middlewares/authenticate.js';
 import { getUserProfileController } from '../controllers/users.js';
 
-// const router = new Router();
 
 router.get('/', authorization, getUserProfileController);
 
