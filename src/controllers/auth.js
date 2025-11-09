@@ -4,9 +4,11 @@ import {
   userRegisterService,
   userLoginService,
   refreshUserSession,
+  logoutUserService,
 } from '../services/auth.js';
 import { SessionCollection } from '../db/models/sessions.js';
 import createHttpError from 'http-errors';
+import { clearAuthCookies } from '../utils/cookies.js';
 
 export const createSession = async (userId) => {
   const accessToken = randomBytes(32).toString('base64');
@@ -80,28 +82,15 @@ export const refreshUserSessionController = async (req, res) => {
 export const userLogoutController = async (req, res, next) => {
   try {
     const userId = req.user?._id;
-    if (!userId) {
-      throw createHttpError(401, 'Unauthorized');
-    }
+    if (!userId) throw createHttpError(401, 'Unauthorized');
 
-    const { accessToken } = req.cookies;
-    if (accessToken) {
-      await SessionCollection.deleteOne({ userId, accessToken });
-    }
+    const { sessionId, accessToken } = req.cookies || {};
 
-    const cookieOptions = {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-    };
+    await logoutUserService({ userId, sessionId, accessToken });
 
-    res.clearCookie('accessToken', cookieOptions);
-    res.clearCookie('refreshToken', cookieOptions);
-    res.clearCookie('sessionId', cookieOptions);
-
+    clearAuthCookies(res);
     return res.status(204).send();
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };

@@ -54,3 +54,16 @@ export const refreshUserSession = async (sessionId, refreshToken) => {
 
   return newSession;
 };
+
+export const logoutUserService = async ({ userId, sessionId, accessToken }) => {
+  if (sessionId) {
+    const res = await SessionCollection.deleteOne({ _id: sessionId, userId });
+    return res.deletedCount > 0;
+  }
+
+  if (accessToken) {
+    const res = await SessionCollection.deleteOne({ userId, accessToken });
+    return res.deletedCount > 0;
+  }
+  return false;
+};

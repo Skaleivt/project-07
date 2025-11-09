@@ -15,25 +15,6 @@ servers:
   - url: http://127.0.0.1:8080
 
 # paths:
-paths: 
-  /api/auth/logout:
-    post:
-      tags: [Auth]
-      summary: Logout (private)
-      description: |
-        Приватний ендпоінт. Видаляє поточну сесію користувача та очищає cookies
-        (`accessToken`, `refreshToken`, `sessionId`). Потребує валідні cookies.
-      security:
-        - cookieAuth: []
-      responses:
-        '204':
-          description: Successfully logged out (no content)
-        '400':
-          $ref: ../swagger/components/responses/400.yaml
-        '401':
-          $ref: ../swagger/components/responses/401.yaml
-        '500':
-          $ref: ../swagger/components/responses/500.yaml
 
 components:
   securitySchemes:

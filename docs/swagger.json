@@ -23,36 +23,6 @@
       "description": "Operations about users."
     }
   ],
-  "paths": {
-    "/api/auth/logout": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Logout (private)",
-        "description": "Приватний ендпоінт. Видаляє поточну сесію користувача та очищає cookies\n(`accessToken`, `refreshToken`, `sessionId`). Потребує валідні cookies.\n",
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Successfully logged out (no content)"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    }
-  },
   "components": {
     "securitySchemes": {
       "bearerAuth": {
@@ -63,80 +33,6 @@
         "type": "apiKey",
         "in": "cookie",
         "name": "accessToken"
-      }
-    },
-    "responses": {
-      "400": {
-        "description": "Invalid request data",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 400
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Bad Request — Invalid data format or missing required fields."
-                },
-                "details": {
-                  "type": "string",
-                  "example": "The field \"email\" must be a valid email address."
-                }
-              }
-            }
-          }
-        }
-      },
-      "401": {
-        "description": "Unauthorized — missing or invalid token",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 401
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Unauthorized — Missing or invalid authentication token."
-                },
-                "details": {
-                  "type": "string",
-                  "example": "Please provide a valid Bearer token in the Authorization header."
-                }
-              }
-            }
-          }
-        }
-      },
-      "500": {
-        "description": "Internal server error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 500
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Internal Server Error — Something went wrong on the server."
-                },
-                "details": {
-                  "type": "string",
-                  "example": "Unexpected error while updating contact."
-                }
-              }
-            }
-          }
-        }
       }
     }
   }
