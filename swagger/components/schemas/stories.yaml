@@ -49,4 +49,4 @@ properties:
     description: 'Last story update timestamp'
     type: string
     format: date-time
-    example: '2024-05-08T16:12:14.954
+    example: '2024-05-08T16:12:14.954158'
