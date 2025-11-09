@@ -18,9 +18,16 @@ paths:
   /api/stories:
     get:
       $ref: ../swagger/paths/stories/get.yaml
+  /api/users/avatar:
+    patch:
+      $ref: ../swagger/paths/users/update-avatar.yaml
 
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
