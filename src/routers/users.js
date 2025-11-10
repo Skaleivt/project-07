@@ -8,11 +8,8 @@ import {
   addStoryToSavedController,
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import {
-  updateUserValidationSchema,
-  addSavedStoryValidationSchema,
-} from '../validation/user.js';
-
+import { updateUserValidationSchema } from '../validation/user.js';
+import { addSavedStoryValidationSchema } from '../validation/stories.js';
 const router = Router();
 
 router.get('/', authorization, getUsersController);

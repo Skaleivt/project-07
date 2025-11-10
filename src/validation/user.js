@@ -13,13 +13,3 @@ export const updateUserValidationSchema = Joi.object({
     'string.uri': 'Avatar must be a valid URL',
   }),
 }).min(1);
-
-export const addSavedStoryValidationSchema = Joi.object({
-  storyId: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .messages({
-      'string.pattern.base': 'Invalid storyId format',
-      'any.required': 'storyId is required',
-    }),
-});
