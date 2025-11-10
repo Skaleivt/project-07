@@ -2,12 +2,12 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "Contacts APP",
+    "title": "travelers APP",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "This is a documentation of Contacts APP"
+    "description": "This is a documentation of travelers APP"
   },
   "servers": [
     {
@@ -135,8 +135,239 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
           "500": {
             "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/api/stories/{storyId}": {
+      "patch": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Update story by id",
+        "operationId": "updateStory",
+        "description": "Update an existing story's details by id",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "storyId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "64fa2f3e8f1c2b5d1a234567"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/patchStories"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Story updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Story updated successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/stories"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/api/users/avatar": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user avatar",
+        "operationId": "updateUserAvatar",
+        "description": "Приватний ендпоінт. Оновлює аватар поточного користувача.  \nПриймає `multipart/form-data` з полем **avatar** (файл зображення).  \nПовертає нове посилання на аватар.\n",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "avatar"
+                ],
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Avatar updated successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "671f8ee3c0b8a0a2c2a0e1a3"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "TestUser"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "test@example.com"
+                        },
+                        "avatarURL": {
+                          "type": "string",
+                          "example": "https://res.cloudinary.com/demo/image/upload/v123/avatar.jpg"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — missing file or invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Avatar file is required"
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — user not logged in or token invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — unexpected failure (Cloudinary or DB)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -144,9 +375,17 @@
   },
   "components": {
     "securitySchemes": {
+<<<<<<< HEAD
+=======
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer"
+      },
+>>>>>>> 0d3cef7 (add private PATCH /api/users/avatar endpoint + swagger docs)
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "accessToken"
       }
     },
     "schemas": {
@@ -215,9 +454,116 @@
             "example": "2024-05-08T16:12:14.954158"
           }
         }
+      },
+      "patchStories": {
+        "type": "object",
+        "properties": {
+          "img": {
+            "type": "string",
+            "example": "https://example.com/new-image.png"
+          },
+          "title": {
+            "type": "string",
+            "example": "Updated Story Title"
+          },
+          "article": {
+            "type": "string",
+            "example": "Updated story content text"
+          },
+          "category": {
+            "type": "string",
+            "example": "64fa2f3e8f1c2b5d1a234568"
+          }
+        },
+        "required": []
       }
     },
     "responses": {
+      "400": {
+        "description": "Invalid request data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 400
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Bad Request — Invalid data format or missing required fields."
+                },
+                "details": {
+                  "type": "string",
+                  "example": "The field \"email\" must be a valid email address."
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized — missing or invalid token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Unauthorized — Missing or invalid authentication token."
+                },
+                "details": {
+                  "type": "string",
+                  "example": "Please provide a valid Bearer token in the Authorization header."
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Story not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 404
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Story not found"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Story not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "500": {
         "description": "Internal server error",
         "content": {

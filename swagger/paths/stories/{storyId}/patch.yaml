@@ -1,0 +1,49 @@
+tags:
+  - Stories
+summary: Update story by id
+operationId: updateStory
+description: Update an existing story's details by id
+security:
+  - cookieAuth: []
+parameters:
+  - in: path
+    name: storyId
+    required: true
+    schema:
+      type: string
+      example: '64fa2f3e8f1c2b5d1a234567'
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '../../../components/schemas/patchStories.yaml'
+responses:
+  '200':
+    description: Story updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Story updated successfully
+            data:
+              type: object
+              $ref: '../../../components/schemas/stories.yaml'
+  '400':
+    $ref: '../../../components/responses/400.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

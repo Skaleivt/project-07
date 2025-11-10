@@ -1,5 +1,5 @@
-import { storiesCollection } from '../db/models/stories.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
+import { storiesCollection } from '../db/models/stories.js';
 
 export const getAllStories = async ({ page, perPage, filter }) => {
   const skip = (page - 1) * perPage;
@@ -21,4 +21,18 @@ export const getAllStories = async ({ page, perPage, filter }) => {
     data: stories,
     ...paginationData,
   };
+};
+
+export const updateStory = async (
+  storyId,
+  userId,
+  payload,
+  options = { new: true },
+) => {
+  const story = await storiesCollection.findOneAndUpdate(
+    { _id: storyId, ownerId: userId },
+    payload,
+    options,
+  );
+  return story;
 };
