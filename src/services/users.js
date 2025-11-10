@@ -12,9 +12,10 @@ export async function getUserProfile(userId) {
 }
 
 export const deleteStoryFromSaved = async (storyId, userId) => {
-  const contact = await UsersCollection.findOneAndDelete({
-    _id: storyId,
+  const contact = await UsersCollection.findByIdAndUpdate(
     userId,
-  });
+    { $delToSet: { selectedStories: storyId } },
+    { new: true, select: 'selectedStories' },
+  );
   return contact;
 };
