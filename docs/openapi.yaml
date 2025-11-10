@@ -12,12 +12,19 @@ tags:
 servers:
   # замінити посилання
   - url: https://nodejs-hw-mongodb-7-oin4.onrender.com
-  - url: http://127.0.0.1:8080
+  - url: http://localhost:3000
 
-# paths:
+paths:
+  /api/stories:
+    get:
+      $ref: ../swagger/paths/stories/get.yaml
 
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken

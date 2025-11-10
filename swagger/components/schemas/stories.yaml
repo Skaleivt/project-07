@@ -1,0 +1,52 @@
+type: object
+required:
+  - img
+  - title
+  - article
+  - category
+  - ownerId
+  - date
+properties:
+  _id:
+    description: "Story's id"
+    type: string
+    example: '68498236a100312bea07902b'
+  img:
+    description: "Link to story's image"
+    type: string
+    example: 'https://ftp.goit.study/img/travel-blog/9584bc494ad84a8fbd5b1ab3rs.webp'
+  title:
+    description: "Story's title"
+    type: string
+    example: 'Мадагаскар: острів дивовижних створінь'
+  article:
+    description: "Story's article"
+    type: string
+    example: 'Мадагаскар — це планета в мініатюрі...'
+  category:
+    description: 'Category ObjectId reference'
+    type: string
+    example: '68fb50c80ae91338641121f4'
+  ownerId:
+    description: "User's parent id"
+    type: string
+    example: '6881563901add19ee16fcffb'
+  date:
+    description: 'Story creation date'
+    type: string
+    format: date-time
+    example: '2024-08-28T00:00:00.000Z'
+  favoriteCount:
+    description: 'Number of favorites'
+    type: number
+    example: 7
+  createdAt:
+    description: 'Story creation timestamp'
+    type: string
+    format: date-time
+    example: '2024-05-08T16:12:14.954151'
+  updatedAt:
+    description: 'Last story update timestamp'
+    type: string
+    format: date-time
+    example: '2024-05-08T16:12:14.954158'
