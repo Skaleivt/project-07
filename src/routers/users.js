@@ -6,10 +6,13 @@ import {
   getUsersController,
   updateCurrentUserController,
   addStoryToSavedController,
+  updateUserAvatarController,
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
 import { addSavedStoryValidationSchema } from '../validation/stories.js';
+import { upload } from '../middlewares/upload.js';
+
 const router = Router();
 
 router.get('/', authorization, getUsersController);
@@ -27,6 +30,13 @@ router.post(
   authorization,
   validateBody(addSavedStoryValidationSchema),
   addStoryToSavedController,
+);
+
+router.patch(
+  '/avatar',
+  authorization,
+  upload.single('avatar'),
+  updateUserAvatarController,
 );
 
 export const userRouter = router;

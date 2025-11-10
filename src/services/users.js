@@ -3,6 +3,7 @@ import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 import { storiesCollection } from '../db/models/stories.js';
 import { Types } from 'mongoose';
+import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export async function getUsers({ page = 1, perPage = 10 }) {
@@ -36,8 +37,40 @@ export async function updateCurrentUser(userId, payload) {
   if (!updatedUser) {
     throw createHttpError(404, 'User not found');
   }
+
   return updatedUser;
 }
+
+export const updateUserAvatarService = async ({ userId, file }) => {
+  if (!userId) {
+    throw createHttpError(401, 'Unauthorized');
+  }
+
+  if (!file) {
+    throw createHttpError(400, 'Avatar file is required');
+  }
+
+  const uploaded = await uploadToCloudinary(file.path);
+  const avatarURL = uploaded.secure_url || uploaded.url;
+
+  if (!avatarURL) {
+    throw createHttpError(500, 'Failed to get avatar URL');
+  }
+
+  const updatedUser = await UsersCollection.findByIdAndUpdate(
+    userId,
+    { avatarURL },
+    { new: true },
+  )
+    .select('-password')
+    .lean();
+
+  if (!updatedUser) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  return updatedUser;
+};
 
 /**
  * Adds a story to the user's selected stories list.

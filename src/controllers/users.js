@@ -1,9 +1,11 @@
 // src/controllers/users.js
+import createHttpError from 'http-errors';
 import {
   getUserProfile,
   addStoryToSavedList,
   updateCurrentUser,
   getUsers,
+  updateUserAvatarService,
 } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
@@ -37,6 +39,10 @@ export async function getUserProfileController(req, res, next) {
 
 export const updateCurrentUserController = async (req, res, next) => {
   try {
+    if (!req.user) {
+      throw createHttpError(401, 'Not authenticated');
+    }
+
     const userid = req.user._id;
     const updateData = req.body;
     const user = await updateCurrentUser(userid, updateData);
@@ -78,3 +84,18 @@ export async function addStoryToSavedController(req, res, next) {
     next(error);
   }
 }
+
+export const updateUserAvatarController = async (req, res, next) => {
+  try {
+    const userId = req.user?._id;
+    const user = await updateUserAvatarService({ userId, file: req.file });
+
+    res.status(200).json({
+      status: 200,
+      message: 'Avatar updated successfully',
+      data: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
