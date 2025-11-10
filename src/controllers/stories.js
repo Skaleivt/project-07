@@ -1,6 +1,25 @@
 import createHttpError from 'http-errors';
 import { storiesCollection } from '../db/models/stories.js';
 import { updateStory } from '../services/stories.js';
+import { getAllStories } from '../services/stories.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseFilterCategoryParams } from '../utils/parseFilterParams.js';
+
+export const getStoriesController = async (req, res) => {
+  const { page, perPage } = parsePaginationParams(req.query);
+  const filter = await parseFilterCategoryParams(req.query);
+
+  const data = await getAllStories({
+    page,
+    perPage,
+    filter,
+  });
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found stories!',
+    data,
+  });
+};
 
 export const createStoryController = async (req, res, next) => {
   try {
