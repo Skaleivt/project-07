@@ -1,3 +1,4 @@
+// src/services/users.js
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 import { storiesCollection } from '../db/models/stories.js';
@@ -14,20 +15,14 @@ export async function getUsers({ page = 1, perPage = 10 }) {
   ]);
 
   const paginationData = calculatePaginationData(usersCount, perPage, page);
-
-  return {
-    data: users,
-    ...paginationData,
-  };
+  return { data: users, ...paginationData };
 }
 
 export async function getUserProfile(userId) {
   const user = await UsersCollection.findOne({ _id: userId });
-
   if (!user) {
-    throw createHttpError(400, 'Don`t found user');
+    throw createHttpError(400, "Don't found user");
   }
-
   return user;
 }
 
@@ -35,15 +30,12 @@ export async function updateCurrentUser(userId, payload) {
   const updatedUser = await UsersCollection.findOneAndUpdate(
     { _id: userId },
     payload,
-    {
-      new: true,
-    },
+    { new: true },
   ).select('-password');
 
   if (!updatedUser) {
     throw createHttpError(404, 'User not found');
   }
-
   return updatedUser;
 }
 
@@ -54,35 +46,35 @@ export async function updateCurrentUser(userId, payload) {
  * @returns {object} Object with the updated user data and action message.
  */
 export async function addStoryToSavedList(userId, storyId) {
+  // validate storyId format
   if (!Types.ObjectId.isValid(storyId)) {
     throw createHttpError(400, 'Invalid story ID format');
   }
 
-  const storyExists = await storiesCollection.exists({ _id: storyId });
+  // ensure story exists
+  const storyExists = await storiesCollection.findById(storyId).lean();
   if (!storyExists) {
-    throw createHttpError(404, `Story with ID ${storyId} not found`);
+    throw createHttpError(404, 'Story not found');
   }
 
-  const storyObjectId = new Types.ObjectId(storyId);
-
-  const updatedUser = await UsersCollection.findByIdAndUpdate(
-    userId,
-    { $addToSet: { selectedStories: storyObjectId } },
-    { new: true, select: 'selectedStories' },
-  );
-
-  if (!updatedUser) {
+  // fetch user
+  const user = await UsersCollection.findById(userId).select('selectedStories');
+  if (!user) {
     throw createHttpError(404, 'User not found');
   }
 
-  const isNew = updatedUser.selectedStories.some(
+  const alreadySaved = user.selectedStories.some(
     (id) => id.toString() === storyId,
   );
 
-  return {
-    user: updatedUser,
-    message: isNew
-      ? 'Story successfully added to saved list'
-      : 'Story was already saved by this user',
-  };
+  if (alreadySaved) {
+    // don't modify DB, just return current user and message
+    return { user, message: 'Story was already saved by this user' };
+  }
+
+  // add and save
+  user.selectedStories.push(new Types.ObjectId(storyId));
+  await user.save();
+
+  return { user, message: 'Story successfully added to saved list' };
 }
