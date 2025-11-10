@@ -3,7 +3,6 @@ import {
   createStoryController,
   updateStoryController,
   getStoriesController,
-  createStoryController,
 } from '../controllers/stories.js';
 import { authorization } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
