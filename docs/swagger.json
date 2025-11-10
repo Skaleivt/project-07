@@ -375,6 +375,13 @@
   },
   "components": {
     "securitySchemes": {
+<<<<<<< HEAD
+=======
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+>>>>>>> 0d3cef7 (add private PATCH /api/users/avatar endpoint + swagger docs)
       "cookieAuth": {
         "type": "apiKey",
         "in": "cookie",

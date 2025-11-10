@@ -58,6 +58,7 @@ export const registerUserController = async (req, res) => {
 
 export const loginUserController = async (req, res) => {
   const user = await userLoginService(req.body);
+
   await SessionCollection.deleteOne({ userId: user._id });
 
   const newSession = await createSession(user._id);

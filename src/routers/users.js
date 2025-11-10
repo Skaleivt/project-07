@@ -1,12 +1,17 @@
+// src/routers/users.js
 import { Router } from 'express';
 import { authorization } from '../middlewares/authenticate.js';
 import {
   getUserProfileController,
   getUsersController,
+  updateCurrentUserController,
+  addStoryToSavedController,
+  updateUserAvatarController,
 } from '../controllers/users.js';
-
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
+import { addSavedStoryValidationSchema } from '../validation/stories.js';
+import { upload } from '../middlewares/upload.js';
 import { updateCurrentUserController } from '../controllers/users.js';
 
 import { upload } from '../middlewares/upload.js';
@@ -14,8 +19,9 @@ import { updateUserAvatarController } from '../controllers/users.js';
 
 const router = new Router();
 
-router.get('/', getUsersController);
+const router = Router();
 
+router.get('/', authorization, getUsersController);
 router.get('/current', authorization, getUserProfileController);
 
 router.patch(
@@ -23,6 +29,13 @@ router.patch(
   authorization,
   validateBody(updateUserValidationSchema),
   updateCurrentUserController,
+);
+
+router.post(
+  '/saved',
+  authorization,
+  validateBody(addSavedStoryValidationSchema),
+  addStoryToSavedController,
 );
 
 router.patch(
@@ -33,3 +46,4 @@ router.patch(
 );
 
 export const userRouter = router;
+export default router;

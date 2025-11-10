@@ -8,8 +8,8 @@ export const updateUserValidationSchema = Joi.object({
   email: Joi.string().email().optional().messages({
     'string.email': 'Email must be a valid email',
   }),
- 
+
   avatarUrl: Joi.string().uri().optional().messages({
     'string.uri': 'Avatar must be a valid URL',
   }),
-}).min(1); 
+}).min(1);
