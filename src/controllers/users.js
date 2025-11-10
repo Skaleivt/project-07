@@ -1,8 +1,11 @@
 import { getUserProfile, updateCurrentUser, getUsers } from '../services/users.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 
 export async function getUsersController(req, res) {
-  const users = await getUsers();
+  const { page, perPage } = parsePaginationParams(req.query);
+
+  const users = await getUsers({page, perPage});
 
   res.status(200).json({
     status: 200,

@@ -1,14 +1,23 @@
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export async function getUsers() {
-  const users = await UsersCollection.find();
 
-  if (!users) {
-    throw createHttpError(400, 'Don`t found user');
-  }
+export async function getUsers({ page = 1, perPage = 10 }) {
+  const limit = perPage;
+  const skip = (page - 1) * perPage;
 
-  return users;
+  const [usersCount, users] = await Promise.all([
+    UsersCollection.countDocuments(), 
+    UsersCollection.find().skip(skip).limit(limit), 
+  ]);
+
+  const paginationData = calculatePaginationData(usersCount, perPage, page);
+
+  return {
+    data: users,
+    ...paginationData,
+  };
 }
 
 export async function getUserProfile(userId) {
