@@ -192,6 +192,18 @@
                     "data": {
                       "type": "object",
                       "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "671f8ee3c0b8a0a2c2a0e1a3"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "TestUser"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "test@example.com"
+                        },
                         "avatarURL": {
                           "type": "string",
                           "example": "https://res.cloudinary.com/demo/image/upload/v123/avatar.jpg"
