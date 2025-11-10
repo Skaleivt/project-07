@@ -27,6 +27,27 @@ export async function getUserProfile(userId) {
   return user;
 }
 
+export const updateUserAvatarService = async ({ userId, file }) => {
+  if (!userId) {
+    throw createHttpError(401, 'Unauthorized');
+  }
+
+  if (!file) {
+    throw createHttpError(400, 'Avatar file is required');
+  }
+
+  const uploaded = await uploadToCloudinary(file.path);
+  const avatarURL = uploaded.secure_url || uploaded.url;
+
+  if (!avatarURL) {
+    throw createHttpError(500, 'Failed to get avatar URL');
+  }
+
+  const updatedUser = await UsersCollection.findByIdAndUpdate(
+    userId,
+    { avatarURL },
+    { new: true },
+  ).lean();
 export async function updateCurrentUser(userId, payload) {
   const updatedUser = await UsersCollection.findOneAndUpdate(
     { _id: userId },
@@ -111,3 +132,5 @@ export async function addStoryToSavedList(userId, storyId) {
 
   return { user, message: 'Story successfully added to saved list' };
 }
+
+};

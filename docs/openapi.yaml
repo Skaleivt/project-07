@@ -18,14 +18,6 @@ paths:
   /api/stories:
     get:
       $ref: ../swagger/paths/stories/get.yaml
-<<<<<<< HEAD
-  /api/stories/{storyId}:
-    patch:
-      $ref: ../swagger/paths/stories/{storyId}/patch.yaml
-
-components:
-  securitySchemes:
-=======
   /api/users/avatar:
     patch:
       $ref: ../swagger/paths/users/update-avatar.yaml
@@ -35,7 +27,22 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
->>>>>>> 0d3cef7 (add private PATCH /api/users/avatar endpoint + swagger docs)
+  /api/stories/{storyId}:
+    patch:
+      $ref: ../swagger/paths/stories/{storyId}/patch.yaml
+
+components:
+  securitySchemes:
+
+  /api/users/avatar:
+    patch:
+      $ref: ../swagger/paths/users/update-avatar.yaml
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
     cookieAuth:
       type: apiKey
       in: cookie

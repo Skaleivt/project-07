@@ -12,6 +12,12 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
 import { addSavedStoryValidationSchema } from '../validation/stories.js';
 import { upload } from '../middlewares/upload.js';
+import { updateCurrentUserController } from '../controllers/users.js';
+
+import { upload } from '../middlewares/upload.js';
+import { updateUserAvatarController } from '../controllers/users.js';
+
+const router = new Router();
 
 const router = Router();
 
