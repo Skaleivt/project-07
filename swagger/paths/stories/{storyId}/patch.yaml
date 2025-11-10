@@ -4,7 +4,7 @@ summary: Update story by id
 operationId: updateStory
 description: Update an existing story's details by id
 security:
-  - bearerAuth: []
+  - cookieAuth: []
 parameters:
   - in: path
     name: storyId
@@ -17,7 +17,7 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: '../../../components/schemas/patchStory.yaml'
+        $ref: '../../../components/schemas/patchStories.yaml'
 responses:
   '200':
     description: Story updated successfully
