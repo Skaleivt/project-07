@@ -2,17 +2,27 @@ import { Router } from 'express';
 import { authorization } from '../middlewares/authenticate.js';
 import {
   getUserProfileController,
-  updateCurrentUserController,
+  getUsersController,
   deleteStoryFromSavedController,
 } from '../controllers/users.js';
-import { isValidId } from '../middlewares/isValidId.js';
+
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
-
+import { updateCurrentUserController } from '../controllers/users.js';
+import { isValidId } from '../middlewares/isValidId.js';
 
 const router = new Router();
 
-router.get('/', authorization, getUserProfileController);
+router.get('/', authorization, getUsersController);
+
+router.get('/current', authorization, getUserProfileController);
+
+router.patch(
+  '/current',
+  authorization,
+  validateBody(updateUserValidationSchema),
+  updateCurrentUserController,
+);
 
 router.delete(
   '/:storyId',
@@ -21,10 +31,4 @@ router.delete(
   deleteStoryFromSavedController,
 );
 
-router.patch(
-  '/current',
-  authorization,
-  validateBody(updateUserValidationSchema),
-  updateCurrentUserController,
-);
 export const userRouter = router;

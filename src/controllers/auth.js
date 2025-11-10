@@ -4,8 +4,11 @@ import {
   userRegisterService,
   userLoginService,
   refreshUserSession,
+  logoutUserService,
 } from '../services/auth.js';
 import { SessionCollection } from '../db/models/sessions.js';
+import createHttpError from 'http-errors';
+import { clearAuthCookies } from '../utils/cookies.js';
 
 export const createSession = async (userId) => {
   const accessToken = randomBytes(32).toString('base64');
@@ -77,4 +80,20 @@ export const refreshUserSessionController = async (req, res) => {
     status: 200,
     message: 'Successfully refreshed!',
   });
+};
+
+export const userLogoutController = async (req, res, next) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) throw createHttpError(401, 'Unauthorized');
+
+    const { sessionId, accessToken } = req.cookies || {};
+
+    await logoutUserService({ userId, sessionId, accessToken });
+
+    clearAuthCookies(res);
+    return res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
 };

@@ -1,0 +1,15 @@
+type: object
+properties:
+  img:
+    type: string
+    example: 'https://example.com/new-image.png'
+  title:
+    type: string
+    example: 'Updated Story Title'
+  article:
+    type: string
+    example: 'Updated story content text'
+  category:
+    type: string
+    example: '64fa2f3e8f1c2b5d1a234568'
+required: []
