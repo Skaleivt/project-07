@@ -1,6 +1,16 @@
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 
+export async function getUsers() {
+  const users = await UsersCollection.find();
+
+  if (!users) {
+    throw createHttpError(400, 'Don`t found user');
+  }
+
+  return users;
+}
+
 export async function getUserProfile(userId) {
   const user = await UsersCollection.findOne({ _id: userId });
 
