@@ -1,11 +1,11 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: Contacts APP
+  title: travelers APP
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is a documentation of Contacts APP
+  description: This is a documentation of travelers APP
 tags:
   - name: Contacts
     description: Operations about users.
@@ -27,6 +27,12 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+  /api/stories/{storyId}:
+    patch:
+      $ref: ../swagger/paths/stories/{storyId}/patch.yaml
+
+components:
+  securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
