@@ -1,0 +1,50 @@
+# swagger/paths/users/saved-stories-post.yaml
+/api/users/saved:
+  post:
+    tags:
+      - Users
+    summary: Add a story to the user's saved list
+    operationId: addStoryToSaved
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - storyId
+            properties:
+              storyId:
+                type: string
+                description: The MongoDB ID of the story to be saved.
+                example: 68498236a100312bea079008
+    responses:
+      '200':
+        description: Story successfully added or already present in the list.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Story successfully added to saved list
+                data:
+                  type: object
+                  properties:
+                    savedStories:
+                      type: array
+                      items:
+                        type: string
+                      example: ['68498236a100312bea079008']
+      '400':
+        $ref: '#/components/responses/400'
+      '401':
+        $ref: '#/components/responses/401'
+      '404':
+        $ref: '#/components/responses/404'
