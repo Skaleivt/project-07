@@ -2,12 +2,12 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "Contacts APP",
+    "title": "Travel Stories",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "This is a documentation of Contacts APP"
+    "description": "This is a documentation of Travel Stories"
   },
   "servers": [
     {
@@ -19,7 +19,7 @@
   ],
   "tags": [
     {
-      "name": "Contacts",
+      "name": "Users",
       "description": "Operations about users."
     }
   ],
@@ -140,6 +140,113 @@
           }
         }
       }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get list of users",
+        "operationId": "getUsers",
+        "description": "Get list of users with this endpoint",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found users!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found users!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "data",
+                        "page",
+                        "perPage",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/user"
+                          }
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 2
+                        },
+                        "perPage": {
+                          "type": "number",
+                          "example": 4
+                        },
+                        "totalItems": {
+                          "type": "number",
+                          "example": 4
+                        },
+                        "totalPages": {
+                          "type": "number",
+                          "example": 4
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -220,9 +327,105 @@
             "example": "2024-05-08T16:12:14.954158"
           }
         }
+      },
+      "user": {
+        "type": "object",
+        "required": [
+          "name",
+          "avatarUrl",
+          "description"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "64f7c2e2b5a3c4d1a8f12345",
+            "description": "Унікальний ідентифікатор користувача (MongoDB ObjectId)"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 32,
+            "example": "Матвій Савченко",
+            "description": "Ім’я користувача"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "matviy@example.com",
+            "description": "Електронна пошта користувача (може бути відсутня)"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128,
+            "example": "P@ssw0rd123",
+            "description": "Хешований пароль користувача"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/avatars/matviy.webp",
+            "description": "Посилання на аватар користувача"
+          },
+          "articlesAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 20,
+            "description": "Кількість створених користувачем історій або статей"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "example": "Мене звати Матвій. Люблю подорожувати і ділитися натхненням.",
+            "description": "Короткий опис користувача"
+          },
+          "selectedStories": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "64f7c2e2b5a3c4d1a8f789ab"
+            },
+            "description": "Масив ObjectId історій, які користувач зберіг"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-11-06T09:30:00.000Z",
+            "description": "Дата створення запису"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-11-06T10:10:00.000Z",
+            "description": "Дата останнього оновлення"
+          }
+        }
       }
     },
     "responses": {
+      "401": {
+        "description": "Unauthorized — missing or invalid token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Unauthorized — Missing or invalid authentication token."
+                },
+                "details": {
+                  "type": "string",
+                  "example": "Please provide a valid Bearer token in the Authorization header."
+                }
+              }
+            }
+          }
+        }
+      },
       "500": {
         "description": "Internal server error",
         "content": {

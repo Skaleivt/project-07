@@ -1,13 +1,13 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: Contacts APP
+  title: Travel Stories
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is a documentation of Contacts APP
+  description: This is a documentation of Travel Stories
 tags:
-  - name: Contacts
+  - name: Users
     description: Operations about users.
 servers:
   # замінити посилання
@@ -18,6 +18,10 @@ paths:
   /api/stories:
     get:
       $ref: ../swagger/paths/stories/get.yaml
+
+  /api/users:
+    get:
+      $ref: ../swagger/paths/users/get.yaml
 
 components:
   securitySchemes:
