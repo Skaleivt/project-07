@@ -1,63 +1,43 @@
-// src/controllers/users.js
-import { UsersCollection } from '../db/models/users.js';
-import { storiesCollection } from '../db/models/stories.js';
-import { getUserProfile } from '../services/users.js';
 import {
+  getAllUsers,
+  getUserProfile,
   addStoryToSavedList,
   updateCurrentUser,
-  getUsers,
   updateUserAvatarService,
+  getUserById,
 } from '../services/users.js';
-import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 // Отримати список усіх користувачів
-export const getAllUsers = async (req, res, next) => {
-  try {
-    const users = await UsersCollection.find({}, '_id name email avatar')
-      .sort({ createdAt: -1 })
-      .lean();
+export const getAllUsersController = async (req, res) => {
+  const { page, perPage } = req.params;
 
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
+  const users = await getAllUsers(page, perPage);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Get all users',
+    data: users,
+  });
 };
 
 // Отримати одного користувача + його статті
-export const getUserById = async (req, res) => {
+export const getUserByIdController = async (req, res) => {
   const { id } = req.params;
 
-  const user = await UsersCollection.findById(id).lean();
-  if (!user) return res.status(404).json({ message: 'User not found' });
-
-  const stories = await storiesCollection
-    .find({ ownerId: id })
-    .select('_id title img date favoriteCount')
-    .sort({ date: -1 })
-    .lean();
+  const user = await getUserById(id);
 
   res.status(200).json({
     status: 200,
     message: 'Get id user',
-    data: { user, stories },
+    data: user,
   });
 };
 
-// Публічний отримання користувачів
-export async function getUsersController(req, res) {
-  const { page, perPage } = parsePaginationParams(req.query);
-  const users = await getUsers({ page, perPage });
-
-  res.status(200).json({
-    status: 200,
-    message: 'Users fetched',
-    data: users,
-  });
-}
-
 // отримання даних профіля користувача
 export async function getUserProfileController(req, res) {
-  const user = await getUserProfile(req.user._id.toString());
+  const userId = req.user._id;
+
+  const user = await getUserProfile(userId);
 
   res.status(200).json({
     status: 200,
@@ -90,14 +70,11 @@ export async function addStoryToSavedController(req, res) {
     });
   }
 
-  const { user, message } = await addStoryToSavedList(
-    req.user._id.toString(),
-    storyId,
-  );
+  const user = await addStoryToSavedList(req.user._id, storyId);
 
   res.status(200).json({
     status: 200,
-    message,
+    message: 'Story successfully added',
     data: {
       savedStories: user.selectedStories,
     },
@@ -106,7 +83,7 @@ export async function addStoryToSavedController(req, res) {
 
 // Оновлення аватару користувача
 export const updateUserAvatarController = async (req, res) => {
-  const userId = req.user?._id;
+  const userId = req.user._id;
   const user = await updateUserAvatarService({ userId, file: req.file });
 
   res.status(200).json({

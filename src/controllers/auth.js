@@ -7,7 +7,6 @@ import {
   logoutUserService,
 } from '../services/auth.js';
 import { SessionCollection } from '../db/models/sessions.js';
-import createHttpError from 'http-errors';
 import { clearAuthCookies } from '../utils/cookies.js';
 
 export const createSession = async (userId) => {
@@ -83,18 +82,16 @@ export const refreshUserSessionController = async (req, res) => {
   });
 };
 
-export const userLogoutController = async (req, res, next) => {
-  try {
-    const userId = req.user?._id;
-    if (!userId) throw createHttpError(401, 'Unauthorized');
+export const userLogoutController = async (req, res) => {
+  const userId = req.user._id;
 
-    const { sessionId, accessToken } = req.cookies || {};
+  const { sessionId, accessToken } = req.cookies || {};
 
-    await logoutUserService({ userId, sessionId, accessToken });
+  await logoutUserService({ userId, sessionId, accessToken });
 
-    clearAuthCookies(res);
-    return res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
+  clearAuthCookies(res);
+  res.status(204).json({
+    status: 204,
+    message: 'Successfully logout',
+  });
 };
