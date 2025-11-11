@@ -39,7 +39,7 @@ import createHttpError from 'http-errors';
 import {
   getUserProfile,
   addStoryToSavedList,
-  removeStoryFromSaved,
+  removeStoryFromSavedList,
   updateCurrentUser,
   getUsers,
   updateUserAvatarService,
@@ -146,7 +146,7 @@ export async function removeStoryFromSavedController(req, res, next) {
   try {
     const { storyId } = req.body;
 
-    const { user, message } = await removeStoryFromSaved(
+    const { user, message } = await removeStoryFromSavedList(
       req.user._id.toString(),
       storyId,
     );
