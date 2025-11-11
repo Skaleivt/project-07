@@ -11,6 +11,7 @@ import {
   refreshStoryValidationSchema,
 } from '../validation/stories.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { upload } from '../middlewares/upload.js';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.post(
   '/',
   authorization,
   validateBody(createStoryValidationSchema),
+  upload.single('img'),
   createStoryController,
 );
 
@@ -28,6 +30,7 @@ router.patch(
   authorization,
   isValidId,
   validateBody(refreshStoryValidationSchema),
+  upload.single('img'),
   updateStoryController,
 );
 

@@ -1,37 +1,26 @@
-// src/routers/users.js
 import { Router } from 'express';
-import { getUserById, getAllUsers } from '../controllers/users.js';
-
-const router = Router();
-
-/**
- * GET /api/users
- * Отримати список усіх користувачів
- */
-router.get('/', getAllUsers);
-
-/**
- * GET /api/users/:id
- * Отримати одного користувача + його історії
- */
-router.get('/:id', getUserById);
-
 import { authorization } from '../middlewares/authenticate.js';
 import {
   getUserProfileController,
-  getUsersController,
   updateCurrentUserController,
   addStoryToSavedController,
   removeStoryFromSavedController,
   updateUserAvatarController,
+  getAllUsersController,
+  getUserByIdController,
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
 import { isValidStoryIdSchema } from '../validation/stories.js';
 import { upload } from '../middlewares/upload.js';
 
-router.get('/', authorization, getUsersController);
+const router = Router();
+
+router.get('/', getAllUsersController);
+
 router.get('/current', authorization, getUserProfileController);
+
+router.get('/:id', getUserByIdController);
 
 router.patch(
   '/current',
@@ -61,5 +50,4 @@ router.patch(
   updateUserAvatarController,
 );
 
-export const userRouter = router;
-export default router;
+export const usersRouter = router;

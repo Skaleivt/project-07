@@ -16,8 +16,11 @@ router.post(
   validateBody(registerUserSchema),
   registerUserController,
 );
+
 router.post('/login', validateBody(loginUserSchema), loginUserController);
+
 router.post('/refresh', refreshUserSessionController);
+
 router.post('/logout', authorization, userLogoutController);
 
 export const authRouter = router;
