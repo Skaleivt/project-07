@@ -1,5 +1,4 @@
 import createHttpError from 'http-errors';
-import { Types } from 'mongoose';
 import { UsersCollection } from '../db/models/users.js';
 import { storiesCollection } from '../db/models/stories.js';
 import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
@@ -79,10 +78,6 @@ export async function addStoryToSavedList(userId, storyId) {
 }
 
 export async function removeStoryFromSavedList(userId, storyId) {
-  if (!Types.ObjectId.isValid(storyId)) {
-    throw createHttpError(400, 'Invalid story ID format');
-  }
-
   const user = await UsersCollection.findById(userId).select('selectedStories');
   if (!user) {
     throw createHttpError(404, 'User not found');
