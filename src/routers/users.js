@@ -16,9 +16,6 @@ router.get('/', getAllUsers);
  */
 router.get('/:id', getUserById);
 
-export default router;
-import { authorization } from '../middlewares/authenticate.js';
-import { getUserProfileController } from '../controllers/users.js';
 import { authorization } from '../middlewares/authenticate.js';
 import {
   getUserProfileController,
@@ -30,15 +27,8 @@ import {
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
-import { addSavedStoryValidationSchema } from '../validation/stories.js';
+import { isValidStoryIdSchema } from '../validation/stories.js';
 import { upload } from '../middlewares/upload.js';
-import { updateCurrentUserController } from '../controllers/users.js';
-
-import { upload } from '../middlewares/upload.js';
-import { updateUserAvatarController } from '../controllers/users.js';
-
-
-const router = Router();
 
 router.get('/', authorization, getUsersController);
 router.get('/current', authorization, getUserProfileController);
@@ -53,8 +43,15 @@ router.patch(
 router.post(
   '/saved',
   authorization,
-  validateBody(addSavedStoryValidationSchema),
+  validateBody(isValidStoryIdSchema),
   addStoryToSavedController,
+);
+
+router.patch(
+  '/remove',
+  authorization,
+  validateBody(isValidStoryIdSchema),
+  removeStoryFromSavedController,
 );
 
 router.patch(

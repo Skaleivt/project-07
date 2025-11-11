@@ -27,6 +27,20 @@ export async function getUserProfile(userId) {
   return user;
 }
 
+export async function updateCurrentUser(userId, payload) {
+  const updatedUser = await UsersCollection.findOneAndUpdate(
+    { _id: userId },
+    payload,
+    { new: true },
+  ).select('-password');
+
+  if (!updatedUser) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  return updatedUser;
+}
+
 export const updateUserAvatarService = async ({ userId, file }) => {
   if (!userId) {
     throw createHttpError(401, 'Unauthorized');
@@ -47,91 +61,88 @@ export const updateUserAvatarService = async ({ userId, file }) => {
     userId,
     { avatarURL },
     { new: true },
-  ).lean();
-  export async function updateCurrentUser(userId, payload) {
-    const updatedUser = await UsersCollection.findOneAndUpdate(
-      { _id: userId },
-      payload,
-      { new: true },
-    ).select('-password');
+  )
+    .select('-password')
+    .lean();
 
-    if (!updatedUser) {
-      throw createHttpError(404, 'User not found');
-    }
-
-    return updatedUser;
+  if (!updatedUser) {
+    throw createHttpError(404, 'User not found');
   }
 
-  export const updateUserAvatarService = async ({ userId, file }) => {
-    if (!userId) {
-      throw createHttpError(401, 'Unauthorized');
-    }
-
-    if (!file) {
-      throw createHttpError(400, 'Avatar file is required');
-    }
-
-    const uploaded = await uploadToCloudinary(file.path);
-    const avatarURL = uploaded.secure_url || uploaded.url;
-
-    if (!avatarURL) {
-      throw createHttpError(500, 'Failed to get avatar URL');
-    }
-
-    const updatedUser = await UsersCollection.findByIdAndUpdate(
-      userId,
-      { avatarURL },
-      { new: true },
-    )
-      .select('-password')
-      .lean();
-
-    if (!updatedUser) {
-      throw createHttpError(404, 'User not found');
-    }
-
-    return updatedUser;
-  };
-
-  /**
-   * Adds a story to the user's selected stories list.
-   * @param {string} userId - ID of the current user.
-   * @param {string} storyId - ID of the story to be saved.
-   * @returns {object} Object with the updated user data and action message.
-   */
-  export async function addStoryToSavedList(userId, storyId) {
-    // validate storyId format
-    if (!Types.ObjectId.isValid(storyId)) {
-      throw createHttpError(400, 'Invalid story ID format');
-    }
-
-    // ensure story exists
-    const storyExists = await storiesCollection.findById(storyId).lean();
-    if (!storyExists) {
-      throw createHttpError(404, 'Story not found');
-    }
-
-    // fetch user
-    const user = await UsersCollection.findById(userId).select(
-      'selectedStories',
-    );
-    if (!user) {
-      throw createHttpError(404, 'User not found');
-    }
-
-    const alreadySaved = user.selectedStories.some(
-      (id) => id.toString() === storyId,
-    );
-
-    if (alreadySaved) {
-      // don't modify DB, just return current user and message
-      return { user, message: 'Story was already saved by this user' };
-    }
-
-    // add and save
-    user.selectedStories.push(new Types.ObjectId(storyId));
-    await user.save();
-
-    return { user, message: 'Story successfully added to saved list' };
-  }
+  return updatedUser;
 };
+
+/**
+ * Adds a story to the user's selected stories list.
+ * @param {string} userId - ID of the current user.
+ * @param {string} storyId - ID of the story to be saved.
+ * @returns {object} Object with the updated user data and action message.
+ */
+export async function addStoryToSavedList(userId, storyId) {
+  // validate storyId format
+  if (!Types.ObjectId.isValid(storyId)) {
+    throw createHttpError(400, 'Invalid story ID format');
+  }
+
+  // ensure story exists
+  const storyExists = await storiesCollection.findById(storyId).lean();
+  if (!storyExists) {
+    throw createHttpError(404, 'Story not found');
+  }
+
+  // fetch user
+  const user = await UsersCollection.findById(userId).select('selectedStories');
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const alreadySaved = user.selectedStories.some(
+    (id) => id.toString() === storyId,
+  );
+
+  if (alreadySaved) {
+    // don't modify DB, just return current user and message
+    return { user, message: 'Story was already saved by this user' };
+  }
+
+  // add and save
+  user.selectedStories.push(new Types.ObjectId(storyId));
+  await user.save();
+
+  return { user, message: 'Story successfully added to saved list' };
+}
+
+/**
+ * Removes a story from the user's selected stories list.
+ * @param {string} userId - ID of the current user.
+ * @param {string} storyId - ID of the story to remove.
+ * @returns {object} Object with updated user data and message.
+ */
+export async function removeStoryFromSavedList(userId, storyId) {
+  if (!Types.ObjectId.isValid(storyId)) {
+    throw createHttpError(400, 'Invalid story ID format');
+  }
+
+  const user = await UsersCollection.findById(userId).select('selectedStories');
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const isSaved = user.selectedStories.some((id) => id.toString() === storyId);
+
+  if (!isSaved) {
+    return { user, message: 'Story was not in the saved list' };
+  }
+
+  await UsersCollection.findByIdAndUpdate(
+    userId,
+    { $pull: { selectedStories: storyId } },
+    { new: true },
+  );
+
+  const updatedUser = await UsersCollection.findById(userId).select(
+    'selectedStories',
+  );
+
+  return { user: updatedUser, message: 'Story removed from saved list' };
+}

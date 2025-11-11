@@ -61,7 +61,7 @@ export const refreshStoryValidationSchema = Joi.object({
       'any.invalid': 'Category must be a valid ObjectId',
     }),
 });
-export const addSavedStoryValidationSchema = Joi.object({
+export const isValidStoryIdSchema = Joi.object({
   storyId: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/)
     .required()

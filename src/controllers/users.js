@@ -34,7 +34,7 @@ export const getUserById = async (req, res, next) => {
     next(error);
   }
 };
-import { getUserProfile } from '../services/users.js';
+// import { getUserProfile } from '../services/users.js';
 import createHttpError from 'http-errors';
 import {
   getUserProfile,
@@ -44,11 +44,11 @@ import {
   getUsers,
   updateUserAvatarService,
 } from '../services/users.js';
-import { getUserProfile } from '../services/users.js';
-import createHttpError from 'http-errors';
-import { UsersCollection } from '../db/models/users.js';
-import { updateUserAvatarService } from '../services/users.js';
-import { getUserProfile, updateCurrentUser, getUsers } from '../services/users.js';
+// import { getUserProfile } from '../services/users.js';
+// import createHttpError from 'http-errors';
+// import { UsersCollection } from '../db/models/users.js';
+// import { updateUserAvatarService } from '../services/users.js';
+// import { getUserProfile, updateCurrentUser, getUsers } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 export async function getUsersController(req, res, next) {
@@ -140,43 +140,25 @@ export const updateUserAvatarController = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-export const updateCurrentUserController = async (req, res, next) => {
+};
+
+export async function removeStoryFromSavedController(req, res, next) {
   try {
-    if (!req.user) {
-      throw createHttpError(401, 'Not authenticated');
-    }
+    const { storyId } = req.body;
 
-    const { _id } = req.user;
-
-  
-    const updateData = req.body;
-
-    const updatedUser = await UsersCollection.findByIdAndUpdate(
-      _id,
-      updateData,
-      { new: true }, 
-    ).select('-password'); 
-    if (!updatedUser) {
-      throw createHttpError(404, 'User not found');
-    }
+    const { user, message } = await removeStoryFromSaved(
+      req.user._id.toString(),
+      storyId,
+    );
 
     res.status(200).json({
       status: 200,
-      message: 'User data updated successfully',
-      data: updatedUser,
+      message,
+      data: {
+        savedStories: user.selectedStories,
+      },
     });
   } catch (error) {
     next(error);
   }
-};
-
-export const updateUserAvatarController = async (req, res, next) => {
-  const userId = req.user?._id;
-  const user = await updateUserAvatarService({ userId, file: req.file });
-
-  res.status(200).json({
-    status: 200,
-    message: 'Avatar updated successfully',
-    data: user,
-  });
-};
+}
