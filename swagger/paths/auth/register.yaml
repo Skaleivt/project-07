@@ -2,6 +2,8 @@ tags:
   - Auth
 summary: Register a new user
 operationId: registerUser
+security:
+  - cookieAuth: []
 description: Register a new user with name, email, password, and optional profile data.
 requestBody:
   required: true

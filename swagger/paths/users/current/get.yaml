@@ -1,0 +1,52 @@
+operationId: getCurrentUserProfile
+summary: Get current user's profile
+description: Returns the profile information of the currently authenticated user.
+tags:
+  - Users
+security:
+  - cookieAuth: []
+responses:
+  200:
+    description: Successfully fetched user profile
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: User profile fetched
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: 6718f4d91c8d2c3b6a4e2a91
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: john@example.com
+                avatarUrl:
+                  type: string
+                  example: https://example.com/avatar.jpg
+                createdAt:
+                  type: string
+                  format: date-time
+                  example: 2025-01-01T12:00:00Z
+                updatedAt:
+                  type: string
+                  format: date-time
+                  example: 2025-01-02T12:00:00Z
+  '400':
+    $ref: '../../../components/responses/400.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

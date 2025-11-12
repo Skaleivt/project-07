@@ -1,0 +1,54 @@
+operationId: loginUser
+summary: Log in an existing user
+description: Authenticates a user with email and password, creating a new session and setting cookies.
+security:
+  - cookieAuth: []
+tags:
+  - Auth
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: john@example.com
+          password:
+            type: string
+            example: strongPassword123
+responses:
+  200:
+    description: Successfully logged in an user
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully logged in an user!
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: 6718f4d91c8d2c3b6a4e2a91
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: john@example.com
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

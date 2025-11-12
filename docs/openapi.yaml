@@ -15,34 +15,45 @@ servers:
   - url: http://localhost:3000
 
 paths:
+  /api/auth/register:
+    post:
+      $ref: ../swagger\paths\auth\register.yaml
+  /api/auth/login:
+    post:
+      $ref: ../swagger\paths\auth\login.yaml
+  /api/auth/refresh:
+    post:
+      $ref: ../swagger\paths\auth\refresh.yaml
+  /api/auth/logout:
+    post:
+      $ref: ../swagger\paths\auth\logout.yaml
+
   /api/stories:
     get:
       $ref: ../swagger/paths/stories/get.yaml
-  /api/users/avatar:
-    patch:
-      $ref: ../swagger/paths/users/update-avatar.yaml
-
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
   /api/stories/{storyId}:
     patch:
-      $ref: ../swagger/paths/stories/{storyId}/patch.yaml
-
-components:
-  securitySchemes:
-
+      $ref: ../swagger\paths\stories\{storyId}\patch.yaml
+  /api/users:
+    get:
+      $ref: ../swagger\paths\users\get.yaml
+  /api/users/{id}:
+    get:
+      $ref: ../swagger\paths\users\{userId}\get.yaml
+  /api/users/current:
+    get:
+      $ref: ../swagger\paths\users\current\get.yaml
+    patch:
+      $ref: ../swagger\paths\users\current\patch.yaml
+  /api/users/saved:
+    post:
+      $ref: ../swagger/paths/users/saved-stories-post.yaml
   /api/users/avatar:
     patch:
       $ref: ../swagger/paths/users/update-avatar.yaml
 
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
     cookieAuth:
       type: apiKey
       in: cookie

@@ -1,0 +1,77 @@
+summary: Create a new story
+description: Create a new story for the logged-in user. Requires authentication via cookies.
+operationId: createStory
+tags:
+  - Stories
+security:
+  - cookieAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          title:
+            type: string
+            description: Story title
+            example: My Amazing Trip
+          description:
+            type: string
+            description: Story description or article
+            example: I visited beautiful places in Europe...
+          category:
+            type: string
+            description: Category of the story
+            example: Europe
+          img:
+            type: string
+            format: binary
+            description: Story image
+        required:
+          - title
+          - description
+          - category
+          - img
+responses:
+  '201':
+    description: Story created successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Story created successfully
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: 64fc1234567890abcdef1234
+                title:
+                  type: string
+                  example: My Amazing Trip
+                article:
+                  type: string
+                  example: I visited beautiful places in Europe...
+                category:
+                  type: string
+                  example: Europe
+                img:
+                  type: string
+                  example: https://res.cloudinary.com/.../image.jpg
+                ownerId:
+                  type: string
+                  example: 64fa9876543210abcdef5678
+                date:
+                  type: string
+                  format: date-time
+                  example: 2025-11-12T19:20:30.45Z
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

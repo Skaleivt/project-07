@@ -1,0 +1,25 @@
+operationId: refreshUserSession
+summary: Refresh user session
+description: Refreshes authentication cookies using a valid refresh token stored in cookies.
+tags:
+  - Auth
+security:
+  - cookieAuth: []
+responses:
+  200:
+    description: Session successfully refreshed
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully refreshed!
+  401:
+    description: Invalid or expired refresh token
+  500:
+    description: Internal server error
