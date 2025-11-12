@@ -1,74 +1,92 @@
-// src/controllers/users.js
-import createHttpError from 'http-errors';
 import {
+  getAllUsers,
   getUserProfile,
   addStoryToSavedList,
+  removeStoryFromSavedList,
   updateCurrentUser,
-  getUsers,
   updateUserAvatarService,
+  getUserById,
 } from '../services/users.js';
-import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
-export async function getUsersController(req, res, next) {
-  try {
-    const { page, perPage } = parsePaginationParams(req.query);
-    const users = await getUsers({ page, perPage });
+// Отримати список усіх користувачів
+export const getAllUsersController = async (req, res) => {
+  const { page, perPage } = req.params;
 
-    res.status(200).json({
-      status: 200,
-      message: 'Users fetched',
-      data: users,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+  const users = await getAllUsers(page, perPage);
 
-export async function getUserProfileController(req, res, next) {
-  try {
-    const user = await getUserProfile(req.user._id.toString());
-    res.status(200).json({
-      status: 200,
-      message: 'User profile fetched',
-      data: user,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export const updateCurrentUserController = async (req, res, next) => {
-  try {
-    if (!req.user) {
-      throw createHttpError(401, 'Not authenticated');
-    }
-
-    const userid = req.user._id;
-    const updateData = req.body;
-    const user = await updateCurrentUser(userid, updateData);
-
-    res.status(200).json({
-      status: 200,
-      message: 'User data updated successfully',
-      data: user,
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(200).json({
+    status: 200,
+    message: 'Get all users',
+    data: users,
+  });
 };
 
-export async function addStoryToSavedController(req, res, next) {
+// Отримати одного користувача + його статті
+export const getUserByIdController = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await getUserById(id);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Get id user',
+    data: user,
+  });
+};
+
+// отримання даних профіля користувача
+export async function getUserProfileController(req, res) {
+  const userId = req.user._id;
+
+  const user = await getUserProfile(userId);
+
+  res.status(200).json({
+    status: 200,
+    message: 'User profile fetched',
+    data: user,
+  });
+}
+
+// Оновлення даних користувача приватний
+export const updateCurrentUserController = async (req, res) => {
+  const userid = req.user._id;
+  const updateData = req.body;
+  const user = await updateCurrentUser(userid, updateData);
+
+  res.status(200).json({
+    status: 200,
+    message: 'User data updated successfully',
+    data: user,
+  });
+};
+
+// Додавання історії до збережених
+export async function addStoryToSavedController(req, res) {
+  const { storyId } = req.body;
+
+  if (!storyId) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Validation error: Story ID is required.',
+    });
+  }
+
+  const user = await addStoryToSavedList(req.user._id, storyId);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Story successfully added',
+    data: {
+      savedStories: user.selectedStories,
+    },
+  });
+}
+
+export async function removeStoryFromSavedController(req, res, next) {
   try {
     const { storyId } = req.body;
 
-    if (!storyId) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Validation error: Story ID is required.',
-      });
-    }
-
-    const { user, message } = await addStoryToSavedList(
+    const { user, message } = await removeStoryFromSavedList(
       req.user._id.toString(),
       storyId,
     );
@@ -85,17 +103,14 @@ export async function addStoryToSavedController(req, res, next) {
   }
 }
 
-export const updateUserAvatarController = async (req, res, next) => {
-  try {
-    const userId = req.user?._id;
-    const user = await updateUserAvatarService({ userId, file: req.file });
+// Оновлення аватару користувача
+export const updateUserAvatarController = async (req, res) => {
+  const userId = req.user._id;
+  const user = await updateUserAvatarService({ userId, file: req.file });
 
-    res.status(200).json({
-      status: 200,
-      message: 'Avatar updated successfully',
-      data: user,
-    });
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json({
+    status: 200,
+    message: 'Avatar updated successfully',
+    data: user,
+  });
 };

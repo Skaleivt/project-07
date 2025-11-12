@@ -1,0 +1,57 @@
+tags:
+  - Users
+summary: Remove a story from the user's saved list
+operationId: removeStoryFromSaved
+security:
+  - cookieAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          storyId:
+            type: string
+            pattern: '^[0-9a-fA-F]{24}$'
+            description: The ID of the story to remove
+        required:
+          - storyId
+      example:
+        storyId: "672cf7e93af42a2b5c4ab1f7"
+responses:
+  '200':
+    description: Story successfully removed from the saved list
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Story removed from saved list
+            data:
+              type: object
+              properties:
+                savedStories:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "672cf7e93af42a2b5c4ab1f7"
+                    - "672cf7e93af42a2b5c4ab1f8"
+
+  '400':
+    $ref: ../../components/responses/400.yaml
+
+  '401':
+    $ref: ../../components/responses/401.yaml
+
+  '404':
+    $ref: ../../components/responses/404.yaml
+
+  '500':
+    $ref: ../../components/responses/500.yaml

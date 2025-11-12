@@ -1,6 +1,5 @@
 import createHttpError from 'http-errors';
-import { storiesCollection } from '../db/models/stories.js';
-import { updateStory } from '../services/stories.js';
+import { createStory, updateStory } from '../services/stories.js';
 import { getAllStories } from '../services/stories.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseFilterCategoryParams } from '../utils/parseFilterParams.js';
@@ -21,39 +20,26 @@ export const getStoriesController = async (req, res) => {
   });
 };
 
-export const createStoryController = async (req, res, next) => {
-  try {
-    const { img, title, description, category } = req.body;
+export const createStoryController = async (req, res) => {
+  const { title, description, category } = req.body;
+  const img = req.file;
+  const userId = req.user._id;
 
-    if (!req.user) {
-      throw new createHttpError.Unauthorized('Not authenticated');
-    }
+  const story = await createStory(img, title, description, category, userId);
 
-    const story = await storiesCollection.create({
-      img,
-      title,
-      article: description,
-      category,
-      ownerId: req.user._id,
-      date: new Date(),
-      favoriteCount: 0,
-    });
-
-    res.status(201).json({
-      message: 'Story created successfully',
-      data: story,
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(201).json({
+    message: 'Story created successfully',
+    data: story,
+  });
 };
 
 export const updateStoryController = async (req, res) => {
-  if (!req.user) {
-    throw new createHttpError.Unauthorized('Not authenticated');
-  }
+  const userId = req.user._id;
+  const { id } = req.params;
+  const img = req.file;
+  const updateBody = req.body;
 
-  const story = await updateStory(req.params.id, req.user._id, req.body);
+  const story = await updateStory(id, userId, img, updateBody);
 
   if (!story) {
     throw new createHttpError.NotFound('Story not found or not yours');
