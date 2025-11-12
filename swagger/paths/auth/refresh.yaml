@@ -3,8 +3,7 @@ summary: Refresh user session
 description: Refreshes authentication cookies using a valid refresh token stored in cookies.
 tags:
   - Auth
-security:
-  - cookieAuth: []
+security: []
 responses:
   200:
     description: Session successfully refreshed

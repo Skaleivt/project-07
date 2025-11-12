@@ -1,8 +1,7 @@
 operationId: loginUser
 summary: Log in an existing user
 description: Authenticates a user with email and password, creating a new session and setting cookies.
-security:
-  - cookieAuth: []
+security: []
 tags:
   - Auth
 requestBody:

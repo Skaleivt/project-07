@@ -3,8 +3,7 @@ description: Retrieve user information and a list of their stories.
 tags:
   - Users
 operationId: getUserById
-security:
-  - cookieAuth: []
+security: []
 parameters:
   - name: id
     in: path

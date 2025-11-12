@@ -2,6 +2,7 @@ import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import { storiesCollection } from '../db/models/stories.js';
 import uploadToCloudinary from '../utils/uploadToCloudinary.js';
 import createHttpError from 'http-errors';
+import { UsersCollection } from '../db/models/users.js';
 
 export const getAllStories = async ({ page, perPage, filter }) => {
   const skip = (page - 1) * perPage;
@@ -54,6 +55,35 @@ export const createStory = async (
   return story;
 };
 
+export const getSavedStories = async (userId, page = 1, perPage = 6) => {
+  const user = await UsersCollection.findById(userId).select('selectedStories');
+  const storiesId = user.selectedStories;
+  const limit = Number(perPage);
+  const skip = (page - 1) * perPage;
+  const total = storiesId.length;
+
+  if (!storiesId) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const paginatedIds = storiesId.slice(skip, skip + limit);
+
+  const stories = await storiesCollection.find({
+    _id: { $in: paginatedIds },
+  });
+
+  if (!stories) {
+    throw createHttpError(404, 'User don`t have saved stories');
+  }
+
+  const paginationData = calculatePaginationData(
+    total,
+    Number(perPage),
+    Number(page),
+  );
+  return { data: stories, ...paginationData };
+};
+
 export const updateStory = async (
   storyId,
   userId,
@@ -67,7 +97,6 @@ export const updateStory = async (
   if (!avatarURL) {
     throw createHttpError(500, 'Failed to get avatar URL');
   }
-  console.log('fvcsnjkmd,::::', storyId, userId);
 
   const story = await storiesCollection.findOneAndUpdate(
     { _id: storyId, ownerId: userId },

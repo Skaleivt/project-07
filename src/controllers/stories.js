@@ -1,8 +1,13 @@
 import createHttpError from 'http-errors';
-import { createStory, updateStory } from '../services/stories.js';
+import {
+  createStory,
+  getSavedStories,
+  updateStory,
+} from '../services/stories.js';
 import { getAllStories } from '../services/stories.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseFilterCategoryParams } from '../utils/parseFilterParams.js';
+import { categoriesCollection } from '../db/models/categories.js';
 
 export const getStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -33,6 +38,17 @@ export const createStoryController = async (req, res) => {
   });
 };
 
+export const getSavedStoriesController = async (req, res) => {
+  const userId = req.user._id;
+  const { page, perPage } = req.query;
+  const story = await getSavedStories(userId, page, perPage);
+
+  res.status(201).json({
+    message: 'Story created successfully',
+    data: story,
+  });
+};
+
 export const updateStoryController = async (req, res) => {
   const userId = req.user._id;
   const { id } = req.params;
@@ -49,5 +65,15 @@ export const updateStoryController = async (req, res) => {
     status: 200,
     message: 'Update story successfully!',
     data: story,
+  });
+};
+
+export const getCategoriesController = async (req, res) => {
+  const categories = await categoriesCollection.find();
+
+  res.status(200).json({
+    status: 200,
+    message: 'Get categories successfully!',
+    data: categories,
   });
 };

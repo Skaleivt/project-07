@@ -3,6 +3,8 @@ import {
   createStoryController,
   updateStoryController,
   getStoriesController,
+  getSavedStoriesController,
+  getCategoriesController,
 } from '../controllers/stories.js';
 import { authorization } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
@@ -24,6 +26,10 @@ router.post(
   upload.single('img'),
   createStoryController,
 );
+
+router.get('/owner-stories', authorization, getSavedStoriesController);
+
+router.get('/categories', getCategoriesController);
 
 router.patch(
   '/:id',

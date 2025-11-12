@@ -1,0 +1,69 @@
+operationId: updateOwnerStory
+summary: Update a saved story
+description: Updates the title, description, or category of a story for the authenticated user.
+security:
+  - cookieAuth: []
+tags:
+  - Stories
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - storyId
+        properties:
+          storyId:
+            type: string
+            description: ID of the story to update
+            example: 6718f4d91c8d2c3b6a4e2a91
+          title:
+            type: string
+            description: New title for the story
+            example: Updated Story Title
+          description:
+            type: string
+            description: New description for the story
+            example: Updated story description
+          category:
+            type: string
+            description: New category for the story
+            example: Travel
+responses:
+  '200':
+    description: Story updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Story updated successfully
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: 6718f4d91c8d2c3b6a4e2a91
+                title:
+                  type: string
+                  example: Updated Story Title
+                description:
+                  type: string
+                  example: Updated story description
+                category:
+                  type: string
+                  example: Travel
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '404':
+    $ref: '../../components/responses/404.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

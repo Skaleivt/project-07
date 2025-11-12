@@ -2,6 +2,7 @@ import {
   getAllUsers,
   getUserProfile,
   addStoryToSavedList,
+  removeStoryFromSavedList,
   updateCurrentUser,
   updateUserAvatarService,
   getUserById,
@@ -9,7 +10,7 @@ import {
 
 // Отримати список усіх користувачів
 export const getAllUsersController = async (req, res) => {
-  const { page, perPage } = req.params;
+  const { page, perPage } = req.query;
 
   const users = await getAllUsers(page, perPage);
 
@@ -79,6 +80,27 @@ export async function addStoryToSavedController(req, res) {
       savedStories: user.selectedStories,
     },
   });
+}
+
+export async function removeStoryFromSavedController(req, res, next) {
+  try {
+    const { storyId } = req.body;
+
+    const { user, message } = await removeStoryFromSavedList(
+      req.user._id.toString(),
+      storyId,
+    );
+
+    res.status(200).json({
+      status: 200,
+      message,
+      data: {
+        savedStories: user.selectedStories,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 // Оновлення аватару користувача

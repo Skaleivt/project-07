@@ -3,8 +3,7 @@ summary: Get all users
 description: Returns a paginated list of all registered users.
 tags:
   - Users
-security:
-  - cookieAuth: []
+security: []
 parameters:
   - name: page
     in: query

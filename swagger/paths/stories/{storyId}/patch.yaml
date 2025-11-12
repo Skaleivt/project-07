@@ -3,8 +3,7 @@ tags:
 summary: Update story by id
 operationId: updateStory
 description: Update an existing story's details by id
-security:
-  - cookieAuth: []
+security: []
 parameters:
   - in: path
     name: storyId
