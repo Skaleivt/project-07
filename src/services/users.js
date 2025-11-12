@@ -77,6 +77,29 @@ export async function addStoryToSavedList(userId, storyId) {
   return user;
 }
 
+export async function removeStoryFromSavedList(userId, storyId) {
+  const user = await UsersCollection.findById(userId).select('selectedStories');
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const isSaved = user.selectedStories.some((id) => id.toString() === storyId);
+  if (!isSaved) {
+    return { user, message: 'Story was not in the saved list' };
+  }
+
+  await UsersCollection.findByIdAndUpdate(
+    userId,
+    { $pull: { selectedStories: storyId } },
+    { new: true },
+  );
+  const updatedUser = await UsersCollection.findById(userId).select(
+    'selectedStories',
+  );
+
+  return { user: updatedUser, message: 'Story removed from saved list' };
+}
+
 export const updateUserAvatarService = async ({ userId, file }) => {
   if (!file) {
     throw createHttpError(400, 'Avatar file is required');

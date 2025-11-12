@@ -1,14 +1,20 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: travelers APP
+  title: Travelers APP
+  description: This is a documentation of the Travelers APP API.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is a documentation of travelers APP
+
 tags:
-  - name: Contacts
-    description: Operations about users.
+  - name: Auth
+    description: Authentication and session management.
+  - name: Users
+    description: Operations about users (profiles, saved stories, avatars, etc.).
+  - name: Stories
+    description: Operations related to stories.
+
 servers:
   # замінити посилання
   - url: https://nodejs-hw-mongodb-7-oin4.onrender.com
@@ -18,31 +24,21 @@ paths:
   /api/stories:
     get:
       $ref: ../swagger/paths/stories/get.yaml
-  /api/users/avatar:
-    patch:
-      $ref: ../swagger/paths/users/update-avatar.yaml
 
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
   /api/stories/{storyId}:
     patch:
       $ref: ../swagger/paths/stories/{storyId}/patch.yaml
 
-components:
-  securitySchemes:
-
   /api/users/avatar:
     patch:
       $ref: ../swagger/paths/users/update-avatar.yaml
 
+  /api/users/remove:
+    patch:
+      $ref: ../swagger/paths/users/remove-stories-patch.yaml
+
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
     cookieAuth:
       type: apiKey
       in: cookie

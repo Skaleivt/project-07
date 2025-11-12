@@ -4,13 +4,14 @@ import {
   getUserProfileController,
   updateCurrentUserController,
   addStoryToSavedController,
+  removeStoryFromSavedController,
   updateUserAvatarController,
   getAllUsersController,
   getUserByIdController,
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUserValidationSchema } from '../validation/user.js';
-import { addSavedStoryValidationSchema } from '../validation/stories.js';
+import { isValidStoryIdSchema } from '../validation/stories.js';
 import { upload } from '../middlewares/upload.js';
 
 const router = Router();
@@ -31,8 +32,15 @@ router.patch(
 router.post(
   '/saved',
   authorization,
-  validateBody(addSavedStoryValidationSchema),
+  validateBody(isValidStoryIdSchema),
   addStoryToSavedController,
+);
+
+router.patch(
+  '/remove',
+  authorization,
+  validateBody(isValidStoryIdSchema),
+  removeStoryFromSavedController,
 );
 
 router.patch(
