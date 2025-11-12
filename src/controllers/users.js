@@ -10,7 +10,7 @@ import {
 
 // Отримати список усіх користувачів
 export const getAllUsersController = async (req, res) => {
-  const { page, perPage } = req.params;
+  const { page, perPage } = req.query;
 
   const users = await getAllUsers(page, perPage);
 
