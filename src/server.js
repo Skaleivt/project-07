@@ -15,7 +15,16 @@ export const setupServer = () => {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
-  app.use(cors());
+  // CORS configuration to allow credentials (cookies) from the Next.js frontend
+  const corsOptions = {
+    origin: ['http://localhost:3001', 'http://localhost:3002'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+
+  app.use(cors(corsOptions)); // Using the configured CORS options
+
   app.use(express.json());
   app.use(
     pino({
