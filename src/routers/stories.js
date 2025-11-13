@@ -5,6 +5,7 @@ import {
   getStoriesController,
   getSavedStoriesController,
   getCategoriesController,
+  getStoryByIdController,
 } from '../controllers/stories.js';
 import { authorization } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
@@ -19,6 +20,12 @@ const router = Router();
 
 router.get('/', getStoriesController);
 
+router.get('/owner-stories', authorization, getSavedStoriesController);
+
+router.get('/categories', getCategoriesController);
+
+router.get('/:id', getStoryByIdController);
+
 router.post(
   '/',
   authorization,
@@ -26,10 +33,6 @@ router.post(
   upload.single('img'),
   createStoryController,
 );
-
-router.get('/owner-stories', authorization, getSavedStoriesController);
-
-router.get('/categories', getCategoriesController);
 
 router.patch(
   '/:id',
