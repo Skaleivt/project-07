@@ -26,26 +26,6 @@ export const getStoriesController = async (req, res) => {
   });
 };
 
-export const getStoryByIdController = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const story = await storiesCollection.findById(id);
-
-    if (!story) {
-      throw createHttpError(404, 'Story not found');
-    }
-
-    res.status(200).json({
-      status: 200,
-      message: 'Story found successfully',
-      data: story,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const createStoryController = async (req, res) => {
   const { title, description, category } = req.body;
   const img = req.file;
@@ -96,5 +76,39 @@ export const getCategoriesController = async (req, res) => {
     status: 200,
     message: 'Get categories successfully!',
     data: categories,
+  });
+};
+
+export const getStoryByIdController = async (req, res, next) => {
+  const { id } = req.params;
+
+  const story = await storiesCollection
+    .findById(id)
+    .populate('ownerId', 'name avatarUrl')
+    .populate('category', 'title');
+
+  if (!story) {
+    return res.status(404).json({
+      status: 404,
+      message: 'Story not found',
+      data: null,
+    });
+  }
+
+  const storyData = {
+    _id: story._id,
+    title: story.title,
+    article: story.article,
+    img: story.img,
+    date: story.date,
+    favoriteCount: story.favoriteCount || 0,
+    owner: story.ownerId,
+    category: story.category,
+  };
+
+  res.status(200).json({
+    status: 200,
+    message: 'Story found successfully',
+    data: storyData,
   });
 };
