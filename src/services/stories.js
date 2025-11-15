@@ -4,20 +4,32 @@ import uploadToCloudinary from '../utils/uploadToCloudinary.js';
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 
-export const getAllStories = async ({ page, perPage, filter }) => {
+export const getAllStories = async ({
+  page,
+  perPage,
+  filter,
+  sortField,
+  sortOrder,
+}) => {
   const skip = (page - 1) * perPage;
 
-  const storiesQuery = storiesCollection.find();
+  const query = {};
 
-  if (filter.category) {
-    storiesQuery.where('category').equals(filter.category);
+  if (filter?.category) {
+    query.category = filter.category;
+  }
+  const storiesCount = await storiesCollection.countDocuments(query);
+
+  const sort = {};
+  if (sortField) {
+    sort[sortField] = sortOrder === 'desc' ? -1 : 1;
   }
 
-  const [storiesCount, stories] = await Promise.all([
-    storiesCollection.find().merge(storiesQuery).countDocuments(),
-    storiesQuery.skip(skip).limit(perPage).exec(),
-  ]);
-
+  const stories = await storiesCollection
+    .find(query)
+    .sort(sort)
+    .skip(skip)
+    .limit(perPage);
   const paginationData = calculatePaginationData(storiesCount, page, perPage);
 
   return {

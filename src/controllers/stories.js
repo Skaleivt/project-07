@@ -11,12 +11,15 @@ import { categoriesCollection } from '../db/models/categories.js';
 
 export const getStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
+  const { sortField, sortOrder } = req.query;
   const filter = await parseFilterCategoryParams(req.query);
 
   const data = await getAllStories({
     page,
     perPage,
     filter,
+    sortField,
+    sortOrder,
   });
   res.status(200).json({
     status: 200,
