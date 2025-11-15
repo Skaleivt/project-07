@@ -38,6 +38,14 @@ export const getAllStories = async ({
   };
 };
 
+export async function getStoryById(storyId) {
+  const story = await storiesCollection.findById(storyId);
+  if (!story) {
+    throw createHttpError(400, "Don't found story");
+  }
+  return story;
+}
+
 export const createStory = async (
   img,
   title,

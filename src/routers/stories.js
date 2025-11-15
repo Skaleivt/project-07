@@ -14,10 +14,13 @@ import {
 } from '../validation/stories.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { upload } from '../middlewares/upload.js';
+import { getStoryById } from '../services/stories.js';
 
 const router = Router();
 
 router.get('/', getStoriesController);
+
+router.get('/:id', getStoryById);
 
 router.post(
   '/',

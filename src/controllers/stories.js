@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import {
   createStory,
   getSavedStories,
+  getStoryById,
   updateStory,
 } from '../services/stories.js';
 import { getAllStories } from '../services/stories.js';
@@ -25,6 +26,18 @@ export const getStoriesController = async (req, res) => {
     status: 200,
     message: 'Successfully found stories!',
     data,
+  });
+};
+
+export const getStoryByIdController = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await getStoryById(id);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Get id user',
+    data: user,
   });
 };
 
