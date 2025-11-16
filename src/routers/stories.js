@@ -29,8 +29,8 @@ router.get('/:id', getStoryByIdController);
 router.post(
   '/',
   authorization,
+  upload.single('cover'),
   validateBody(createStoryValidationSchema),
-  upload.single('img'),
   createStoryController,
 );
 
@@ -39,7 +39,7 @@ router.patch(
   authorization,
   isValidId,
   validateBody(refreshStoryValidationSchema),
-  upload.single('img'),
+  upload.single('cover'),
   updateStoryController,
 );
 

@@ -3,14 +3,6 @@ import Joi from 'joi';
 import mongoose from 'mongoose';
 
 export const createStoryValidationSchema = Joi.object({
-  img: Joi.binary()
-    .max(2 * 1024 * 1024)
-    .required()
-    .messages({
-      'any.required': 'Story image is required',
-      'binary.max': 'Image must be less than 2MB',
-    }),
-
   title: Joi.string().max(80).required().messages({
     'string.empty': 'Title is required',
     'string.max': 'Title must be less than 80 characters',

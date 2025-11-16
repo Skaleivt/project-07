@@ -42,11 +42,11 @@ export const getStoryByIdController = async (req, res) => {
 };
 
 export const createStoryController = async (req, res) => {
-  const { title, description, category } = req.body;
+  const { title, description: article, category } = req.body;
   const img = req.file;
   const userId = req.user._id;
 
-  const story = await createStory(img, title, description, category, userId);
+  const story = await createStory(img, title, article, category, userId);
 
   res.status(201).json({
     message: 'Story created successfully',

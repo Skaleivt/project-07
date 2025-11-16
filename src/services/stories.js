@@ -39,13 +39,7 @@ export const getAllStories = async ({
   };
 };
 
-export const createStory = async (
-  img,
-  title,
-  description,
-  category,
-  userId,
-) => {
+export const createStory = async (img, title, article, category, userId) => {
   const uploaded = await uploadToCloudinary(img.path);
   const avatarURL = uploaded.secure_url || uploaded.url;
 
@@ -56,7 +50,7 @@ export const createStory = async (
   const story = await storiesCollection.create({
     img: avatarURL,
     title,
-    article: description,
+    article,
     category,
     ownerId: userId,
     date: new Date(Date.now()),
