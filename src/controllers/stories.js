@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import {
   createStory,
-  getSavedStories,
+  // getSavedStories,
   getStoryById,
   updateStory,
 } from '../services/stories.js';
@@ -47,17 +47,6 @@ export const createStoryController = async (req, res) => {
   const userId = req.user._id;
 
   const story = await createStory(img, title, description, category, userId);
-
-  res.status(201).json({
-    message: 'Story created successfully',
-    data: story,
-  });
-};
-
-export const getSavedStoriesController = async (req, res) => {
-  const userId = req.user._id;
-  const { page, perPage } = req.query;
-  const story = await getSavedStories(userId, page, perPage);
 
   res.status(201).json({
     message: 'Story created successfully',
