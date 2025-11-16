@@ -33,7 +33,6 @@ const userSchema = new Schema(
         ref: 'stories',
       },
     ],
-    default: [],
   },
   {
     timestamps: true,

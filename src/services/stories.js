@@ -3,7 +3,6 @@ import { storiesCollection } from '../db/models/stories.js';
 import uploadToCloudinary from '../utils/uploadToCloudinary.js';
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
-import { categoriesCollection } from '../db/models/categories.js';
 
 export const getAllStories = async ({
   page,
@@ -117,43 +116,4 @@ export const updateStory = async (
     options,
   );
   return story;
-};
-
-export const addStoryToSaved = async (userId, storyId) => {
-  const updatedUser = await UsersCollection.findByIdAndUpdate(
-    userId,
-    { $addToSet: { selectedStories: storyId } },
-    { new: true },
-  );
-
-  if (!updatedUser) {
-    throw createHttpError(404, 'User not found');
-  }
-
-  return updatedUser;
-};
-export const getStoryById = async (storyId) => {
-  const story = await storiesCollection
-    .findById(storyId)
-    .populate('ownerId', 'name avatarUrl')
-    .populate('category', 'title');
-
-  if (!story) {
-    throw createHttpError(404, 'Story not found');
-  }
-
-  return {
-    _id: story._id,
-    title: story.title,
-    article: story.article,
-    img: story.img,
-    date: story.date,
-    favoriteCount: story.favoriteCount || 0,
-    owner: story.ownerId,
-    category: story.category,
-  };
-};
-export const getCategories = async () => {
-  const categories = await categoriesCollection.find();
-  return categories;
 };
