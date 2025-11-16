@@ -8,6 +8,7 @@ import { getAllStories } from '../services/stories.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseFilterCategoryParams } from '../utils/parseFilterParams.js';
 import { categoriesCollection } from '../db/models/categories.js';
+import { storiesCollection } from '../db/models/stories.js';
 
 export const getStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -78,5 +79,39 @@ export const getCategoriesController = async (req, res) => {
     status: 200,
     message: 'Get categories successfully!',
     data: categories,
+  });
+};
+
+export const getStoryByIdController = async (req, res, next) => {
+  const { id } = req.params;
+
+  const story = await storiesCollection
+    .findById(id)
+    .populate('ownerId', 'name avatarUrl')
+    .populate('category', 'title');
+
+  if (!story) {
+    return res.status(404).json({
+      status: 404,
+      message: 'Story not found',
+      data: null,
+    });
+  }
+
+  const storyData = {
+    _id: story._id,
+    title: story.title,
+    article: story.article,
+    img: story.img,
+    date: story.date,
+    favoriteCount: story.favoriteCount || 0,
+    owner: story.ownerId,
+    category: story.category,
+  };
+
+  res.status(200).json({
+    status: 200,
+    message: 'Story found successfully',
+    data: storyData,
   });
 };
