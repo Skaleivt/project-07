@@ -60,7 +60,7 @@ export const getSavedStoriesController = async (req, res) => {
   const story = await getSavedStories(userId, page, perPage);
 
   res.status(201).json({
-    message: 'Story created successfully',
+    message: 'Get saved stories',
     data: story,
   });
 };

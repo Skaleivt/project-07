@@ -54,7 +54,11 @@ export async function updateCurrentUser(userId, payload) {
 }
 
 export async function addStoryToSavedList(userId, storyId) {
-  const storyExists = await storiesCollection.findById(storyId);
+  const storyExists = await storiesCollection.findByIdAndUpdate(
+    storyId,
+    { $inc: { favoriteCount: 1 } },
+    { new: true },
+  );
   if (!storyExists) {
     throw createHttpError(404, 'Story not found');
   }
@@ -72,6 +76,8 @@ export async function addStoryToSavedList(userId, storyId) {
   }
 
   user.selectedStories.push(storyId);
+  user.markModified('selectedStories');
+
   await user.save();
 
   return user;
@@ -82,6 +88,12 @@ export async function removeStoryFromSavedList(userId, storyId) {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+
+  await storiesCollection.findByIdAndUpdate(
+    storyId,
+    { $inc: { favoriteCount: -1 } },
+    { new: true },
+  );
 
   const isSaved = user.selectedStories.some((id) => id.toString() === storyId);
   if (!isSaved) {

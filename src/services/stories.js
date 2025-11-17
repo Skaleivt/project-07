@@ -19,6 +19,9 @@ export const getAllStories = async ({
   if (filter?.category) {
     query.category = filter.category;
   }
+  if (filter?.ownerId) {
+    query.ownerId = filter.ownerId;
+  }
   const storiesCount = await storiesCollection.countDocuments(query);
 
   const sort = {};

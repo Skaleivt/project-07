@@ -28,12 +28,6 @@ export const createStoryValidationSchema = Joi.object({
 });
 
 export const refreshStoryValidationSchema = Joi.object({
-  img: Joi.binary()
-    .max(2 * 1024 * 1024)
-    .messages({
-      'binary.max': 'Image must be less than 2MB',
-    }),
-
   title: Joi.string().max(80).messages({
     'string.max': 'Title must be less than 80 characters',
   }),

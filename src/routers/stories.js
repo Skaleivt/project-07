@@ -38,8 +38,8 @@ router.patch(
   '/:id',
   authorization,
   isValidId,
-  validateBody(refreshStoryValidationSchema),
   upload.single('cover'),
+  validateBody(refreshStoryValidationSchema),
   updateStoryController,
 );
 
