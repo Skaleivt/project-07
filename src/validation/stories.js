@@ -3,6 +3,13 @@ import Joi from 'joi';
 import mongoose from 'mongoose';
 
 export const createStoryValidationSchema = Joi.object({
+  cover: Joi.binary()
+    .max(2 * 1024 * 1024)
+    .messages({
+      'any.required': 'Story image is required',
+      'binary.max': 'Image must be less than 2MB',
+    }),
+
   title: Joi.string().max(80).required().messages({
     'string.empty': 'Title is required',
     'string.max': 'Title must be less than 80 characters',
@@ -28,6 +35,12 @@ export const createStoryValidationSchema = Joi.object({
 });
 
 export const refreshStoryValidationSchema = Joi.object({
+  cover: Joi.binary()
+    .max(2 * 1024 * 1024)
+    .messages({
+      'binary.max': 'Image must be less than 2MB',
+    }),
+
   title: Joi.string().max(80).messages({
     'string.max': 'Title must be less than 80 characters',
   }),

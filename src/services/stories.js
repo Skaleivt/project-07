@@ -91,7 +91,7 @@ export const getSavedStories = async (userId, page = 1, perPage = 6) => {
     Number(perPage),
     Number(page),
   );
-  return { data: stories, ...paginationData };
+  return { stories, ...paginationData };
 };
 
 export const updateStory = async (
@@ -126,16 +126,7 @@ export const getStoryById = async (storyId) => {
     throw createHttpError(404, 'Story not found');
   }
 
-  return {
-    _id: story._id,
-    title: story.title,
-    article: story.article,
-    img: story.img,
-    date: story.date,
-    favoriteCount: story.favoriteCount || 0,
-    owner: story.ownerId,
-    category: story.category,
-  };
+  return story;
 };
 
 export const getCategories = async () => {
