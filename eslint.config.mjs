@@ -15,7 +15,8 @@ export default [
       semi: ['error', 'always'],
       'no-unused-vars': ['error', { args: 'none' }],
       'no-undef': 'error',
-      'no-console': 'off', // дозволяє console.log
+      'no-console': 'off',
+      caughtErrorsIgnorePattern: '^_',
     },
   },
 ];
