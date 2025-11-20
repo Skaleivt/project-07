@@ -1,28 +1,37 @@
+// utils/parseFilterParams.js
+
 import { categoriesCollection } from '../db/models/categories.js';
+import { ObjectId } from 'mongodb';
 
 export const parseFilterCategoryParams = async (query) => {
-  const { category, ownerId, filter } = query; // Додаємо 'filter'
-  const finalFilter = {};
+  const { category } = query;
+  if (!category) return {};
 
-  // Якщо надано нестандартний параметр 'filter', припускаємо, що це ID власника
-  if (filter) {
-    finalFilter.ownerId = filter; // Або category, залежно від вашої логіки
-    return finalFilter;
+  const foundCategory = await categoriesCollection.findOne({ _id: category });
+  return foundCategory ? { category: foundCategory._id } : {};
+};
+
+export const parseFilterOwnerParams = (query) => {
+  const { filter } = query;
+  if (!filter) return {};
+
+  try {
+    return { ownerId: new ObjectId(filter) };
+  } catch (_) {
+    return {};
+  }
+};
+
+export const parseFilterParams = async (query) => {
+  const categoryFilter = await parseFilterCategoryParams(query);
+  if (Object.keys(categoryFilter).length > 0) {
+    return categoryFilter;
   }
 
-  // Якщо надано стандартні параметри, використовуємо стару логіку (з виправленням)
-  if (category) {
-    const foundCategory = await categoriesCollection.findOne({
-      name: category,
-    });
-    if (foundCategory) {
-      finalFilter.category = foundCategory._id;
-    }
+  const ownerFilter = parseFilterOwnerParams(query);
+  if (Object.keys(ownerFilter).length > 0) {
+    return ownerFilter;
   }
 
-  if (ownerId) {
-    finalFilter.ownerId = ownerId;
-  }
-
-  return finalFilter;
+  return {};
 };
