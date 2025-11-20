@@ -18,7 +18,7 @@ tags:
 servers:
   # замінити посилання
   - url: https://nodejs-hw-mongodb-7-oin4.onrender.com
-  - url: http://localhost:3000
+  # - url: http://localhost:3000
 
 paths:
   /api/auth/register:
@@ -46,7 +46,7 @@ paths:
     get:
       $ref: ../swagger/paths/stories/categories.yaml
   /api/stories/{storyId}:
-    patch: 
+    patch:
       $ref: ../swagger/paths/stories/{storyId}/patch.yaml
 
   /api/users:
@@ -63,13 +63,11 @@ paths:
   /api/users/saved:
     post:
       $ref: ../swagger/paths/users/saved-stories-post.yaml
+    delete:
+      $ref: ../swagger/paths/users/remove-stories-delete.yaml
   /api/users/avatar:
     patch:
       $ref: ../swagger/paths/users/update-avatar.yaml
-
-  /api/users/saved:
-    delete:
-      $ref: ../swagger/paths/users/remove-stories-delete.yaml
 
 components:
   securitySchemes:
