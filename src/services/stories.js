@@ -65,7 +65,7 @@ export const createStory = async (img, title, article, category, userId) => {
   return story;
 };
 
-export const getSavedStories = async (userId, page = 1, perPage = 6) => {
+export const getSavedStories = async (userId, page = 1, perPage = 10) => {
   const user = await UsersCollection.findById(userId).select('selectedStories');
   const storiesId = user.selectedStories;
   const limit = Number(perPage);
@@ -88,8 +88,8 @@ export const getSavedStories = async (userId, page = 1, perPage = 6) => {
 
   const paginationData = calculatePaginationData(
     total,
-    Number(perPage),
     Number(page),
+    Number(perPage),
   );
   return { stories, ...paginationData };
 };
@@ -119,8 +119,8 @@ export const updateStory = async (
 export const getStoryById = async (storyId) => {
   const story = await storiesCollection
     .findById(storyId)
-    .populate('ownerId', 'name avatarUrl')
-    .populate('category', 'title');
+    .populate('ownerId', '_id name avatarUrl')
+    .populate('category');
 
   if (!story) {
     throw createHttpError(404, 'Story not found');

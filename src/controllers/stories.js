@@ -12,6 +12,7 @@ import { categoriesCollection } from '../db/models/categories.js';
 
 export const getStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
+
   const { sortField, sortOrder } = req.query;
   const filter = await parseFilterCategoryParams(req.query);
 
@@ -36,7 +37,7 @@ export const getStoryByIdController = async (req, res) => {
 
   res.status(200).json({
     status: 200,
-    message: 'Get id user',
+    message: 'Get id story',
     data: user,
   });
 };
