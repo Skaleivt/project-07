@@ -15,10 +15,11 @@ dotenv.config();
 export const setupServer = () => {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
+  const APP = process.env.APP_DOMAIN;
 
   app.use(
     cors({
-      origin: '*',
+      origin: APP,
       credentials: true,
     }),
   );
