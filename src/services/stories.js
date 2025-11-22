@@ -32,6 +32,8 @@ export const getAllStories = async ({
   const stories = await storiesCollection
     .find(query)
     .sort(sort)
+    .populate('ownerId')
+    .populate('category')
     .skip(skip)
     .limit(perPage);
   const paginationData = calculatePaginationData(storiesCount, page, perPage);
