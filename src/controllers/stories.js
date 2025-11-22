@@ -1,3 +1,4 @@
+// src/controllers/stories.js
 import createHttpError from 'http-errors';
 import {
   createStory,

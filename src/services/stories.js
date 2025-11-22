@@ -133,3 +133,4 @@ export const getCategories = async () => {
   const categories = await categoriesCollection.find();
   return categories;
 };
+//src/services/stories.js

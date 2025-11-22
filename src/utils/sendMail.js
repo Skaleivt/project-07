@@ -1,3 +1,4 @@
+// src/utils/sendMail.js
 import 'dotenv/config';
 import nodemailer from 'nodemailer';
 import { SMTP } from '../constants/index.js';
