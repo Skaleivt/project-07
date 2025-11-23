@@ -45,24 +45,21 @@ export const getAllStories = async ({
 };
 
 export const createStory = async (img, title, article, category, userId) => {
-  const uploaded = await uploadToCloudinary(img.path);
-  const avatarURL = uploaded.secure_url || uploaded.url;
-
-  if (!avatarURL) {
-    throw createHttpError(500, 'Failed to get avatar URL');
+  let avatarURL;
+  let updatePayload = { ...payload };
+  if (img) {
+    const uploaded = await uploadToCloudinary(img.path);
+    avatarURL = uploaded.secure_url || uploaded.url;
+    if (!avatarURL) {
+      throw createHttpError(500, 'Failed to get avatar URL');
+    }
+    updatePayload.img = avatarURL;
   }
-
-  const story = await storiesCollection.create({
-    img: avatarURL,
-    title,
-    article,
-    category,
-    ownerId: userId,
-    date: new Date(Date.now()),
-  });
-  if (!story) {
-    throw createHttpError(400, 'Failed to get story');
-  }
+  const story = await storiesCollection.findOneAndUpdate(
+    { _id: storyId, ownerId: userId },
+    updatePayload,
+    options,
+  );
 
   return story;
 };

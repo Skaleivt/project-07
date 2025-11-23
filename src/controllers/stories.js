@@ -45,7 +45,7 @@ export const getStoryByIdController = async (req, res) => {
 
 export const createStoryController = async (req, res) => {
   const { title, description: article, category } = req.body;
-  const img = req.file;
+  const img = req.file || null;
   const userId = req.user._id;
 
   const story = await createStory(img, title, article, category, userId);

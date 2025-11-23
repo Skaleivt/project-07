@@ -14,7 +14,7 @@ export async function getAllUsers(page = 1, perPage = 4) {
     UsersCollection.find().skip(skip).limit(limit),
   ]);
 
-  const paginationData = calculatePaginationData(usersCount, perPage, page);
+  const paginationData = calculatePaginationData(usersCount, page, perPage);
   return { data: users, ...paginationData };
 }
 
