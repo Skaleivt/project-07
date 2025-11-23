@@ -45,7 +45,7 @@ export const getStoryByIdController = async (req, res) => {
 
 export const createStoryController = async (req, res) => {
   const { title, description: article, category } = req.body;
-  const img = req.file || null;
+  const img = req.file;
   const userId = req.user._id;
 
   const story = await createStory(img, title, article, category, userId);
@@ -70,7 +70,7 @@ export const getSavedStoriesController = async (req, res) => {
 export const updateStoryController = async (req, res) => {
   const userId = req.user._id;
   const { id } = req.params;
-  const img = req.file;
+  const img = req.file || null;
   const updateBody = req.body;
 
   const story = await updateStory(id, userId, img, updateBody);
