@@ -1,3 +1,4 @@
+// src/routers/stories.js
 import { Router } from 'express';
 import {
   createStoryController,
