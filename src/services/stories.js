@@ -68,7 +68,10 @@ export const createStory = async (img, title, article, category, userId) => {
 };
 
 export const getSavedStories = async (userId, page = 1, perPage = 10) => {
-  const user = await UsersCollection.findById(userId).select('selectedStories');
+  const user = await UsersCollection.findById(userId)
+    .select('selectedStories')
+    .populate('ownerId')
+    .populate('category');
   const storiesId = user.selectedStories;
   const limit = Number(perPage);
   const skip = (page - 1) * perPage;
