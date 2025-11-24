@@ -1,4 +1,3 @@
-// src/routers/index.js
 import { Router } from 'express';
 import { usersRouter } from './users.js';
 import { storiesRouter } from './stories.js';
