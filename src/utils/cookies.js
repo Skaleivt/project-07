@@ -1,4 +1,3 @@
-// src/utils/cookies.js
 export const authCookieOptions = () => ({
   httpOnly: true,
   sameSite: 'lax',

@@ -1,4 +1,3 @@
-// src/utils/parsePaginationParams.js
 const parseNumber = (number, defaultNumber) => {
   if (typeof number === 'number') {
     return number;
