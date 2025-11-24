@@ -1,4 +1,3 @@
-// src/routers/users.js
 import { Router } from 'express';
 import { authorization } from '../middlewares/authenticate.js';
 import {

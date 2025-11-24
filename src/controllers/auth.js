@@ -1,4 +1,3 @@
-// src/controllers/auth.js
 import { randomBytes } from 'crypto';
 import { FIFTEEN_MINUTES, SEVEN_DAYS } from '../constants/index.js';
 import {
