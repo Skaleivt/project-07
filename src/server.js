@@ -17,9 +17,15 @@ export const setupServer = () => {
   const PORT = Number(process.env.PORT) || 3000;
   const APP = process.env.APP_DOMAIN;
 
+  const allowedOrigins = [
+    APP,
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ];
+
   app.use(
     cors({
-      origin: APP,
+      origin: allowedOrigins,
       credentials: true,
     }),
   );

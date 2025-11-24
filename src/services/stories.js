@@ -67,33 +67,34 @@ export const createStory = async (img, title, article, category, userId) => {
   return story;
 };
 
-export const getSavedStories = async (userId, page, perPage) => {
-  const user = await UsersCollection.findById(userId).select('selectedStories');
-  const storiesId = user.selectedStories;
+export const getSavedStories = async (userId, page = 1, perPage = 10) => {
+  const user = await UsersCollection.findById(userId)
+    .select('selectedStories')
+    .lean();
 
-  if (!storiesId) {
+  if (!user) {
     throw createHttpError(404, 'User not found');
   }
 
-  const limit = Number(perPage);
-  const skip = (page - 1) * perPage;
+  const storiesId = user.selectedStories;
   const total = storiesId.length;
+
+  const skip = (page - 1) * perPage;
+  const limit = perPage;
 
   const paginatedIds = storiesId.slice(skip, skip + limit);
 
   const stories = await storiesCollection
-    .find({
-      _id: { $in: paginatedIds },
-    })
-    .populate('ownerId')
-    .populate('category');
+    .find({ _id: { $in: paginatedIds } })
+    .populate('ownerId', '_id name avatarUrl')
+    .populate('category')
+    .lean();
+  const paginationData = calculatePaginationData(total, page, perPage);
 
-  const paginationData = calculatePaginationData(
-    total,
-    Number(page),
-    Number(perPage),
-  );
-  return { stories, ...paginationData };
+  return {
+    data: { stories: stories },
+    ...paginationData,
+  };
 };
 
 export const updateStory = async (
@@ -103,16 +104,21 @@ export const updateStory = async (
   payload,
   options = { new: true },
 ) => {
-  const uploaded = await uploadToCloudinary(img.path);
-  const avatarURL = uploaded.secure_url || uploaded.url;
+  let finalPayload = { ...payload };
 
-  if (!avatarURL) {
-    throw createHttpError(500, 'Failed to get avatar URL');
+  if (img) {
+    const uploaded = await uploadToCloudinary(img.path);
+    const avatarURL = uploaded.secure_url || uploaded.url;
+
+    if (!avatarURL) {
+      throw createHttpError(500, 'Failed to get image URL');
+    }
+    finalPayload.img = avatarURL;
   }
 
   const story = await storiesCollection.findOneAndUpdate(
     { _id: storyId, ownerId: userId },
-    { ...payload, img: avatarURL },
+    finalPayload,
     options,
   );
   return story;
@@ -120,12 +126,18 @@ export const updateStory = async (
 
 export const getStoryById = async (storyId) => {
   const story = await storiesCollection
-    .findById(storyId)
+    .findOne({ _id: storyId })
     .populate('ownerId', '_id name avatarUrl')
-    .populate('category');
+    .populate('category')
+    .lean();
 
   if (!story) {
     throw createHttpError(404, 'Story not found');
+  }
+
+  if (story.ownerId) {
+    story.owner = story.ownerId;
+    delete story.ownerId;
   }
 
   return story;
