@@ -71,33 +71,29 @@ export const createStory = async (img, title, article, category, userId) => {
 export const getSavedStories = async (userId, page = 1, perPage = 10) => {
   const user = await UsersCollection.findById(userId)
     .select('selectedStories')
-    .populate('ownerId')
-    .populate('category');
-  const storiesId = user.selectedStories;
-  const limit = Number(perPage);
-  const skip = (page - 1) * perPage;
-  const total = storiesId.length;
+    .lean();
 
-  if (!storiesId) {
+  if (!user) {
     throw createHttpError(404, 'User not found');
   }
 
+  const storiesId = user.selectedStories;
+  const total = storiesId.length;
+
+  const skip = (page - 1) * perPage;
+  const limit = perPage;
+
   const paginatedIds = storiesId.slice(skip, skip + limit);
 
-  const stories = await storiesCollection.find({
-    _id: { $in: paginatedIds },
-  });
+  const stories = await storiesCollection
+    .find({ _id: { $in: paginatedIds } })
+    .populate('ownerId', '_id name avatarUrl')
+    .populate('category')
+    .lean();
 
-  if (!stories) {
-    throw createHttpError(404, 'User don`t have saved stories');
-  }
+  const paginationData = calculatePaginationData(total, page, perPage);
 
-  const paginationData = calculatePaginationData(
-    total,
-    Number(page),
-    Number(perPage),
-  );
-  return { stories, ...paginationData };
+  return { data: stories, ...paginationData };
 };
 
 export const updateStory = async (
@@ -107,57 +103,40 @@ export const updateStory = async (
   payload,
   options = { new: true },
 ) => {
-  const uploaded = await uploadToCloudinary(img.path);
-  const avatarURL = uploaded.secure_url || uploaded.url;
+  let finalPayload = { ...payload };
 
-  if (!avatarURL) {
-    throw createHttpError(500, 'Failed to get avatar URL');
+  if (img) {
+    const uploaded = await uploadToCloudinary(img.path);
+    const avatarURL = uploaded.secure_url || uploaded.url;
+
+    if (!avatarURL) {
+      throw createHttpError(500, 'Failed to get image URL');
+    }
+    finalPayload.img = avatarURL;
   }
 
   const story = await storiesCollection.findOneAndUpdate(
     { _id: storyId, ownerId: userId },
-    { ...payload, img: avatarURL },
+    finalPayload,
     options,
   );
   return story;
 };
 
 export const getStoryById = async (storyId) => {
-  // Дыягнастычны лог — пакіньце часова
-  console.log('Service Layer: Incoming ID:', storyId);
-
-  // Пабудаваць умовы для $or — пакрывем і ObjectId, і string _id
-  const orConditions = [];
-
-  // Калі радок выглядае як валідны ObjectId — дадамо адпаведны аб'ект
-  if (mongoose.isValidObjectId(storyId)) {
-    try {
-      orConditions.push({ _id: new mongoose.Types.ObjectId(storyId) });
-    } catch (e) {
-      // на ўсякі выпадак — ігнаруем памылку канвертацыі
-      console.warn('Could not convert incoming id to ObjectId:', e);
-    }
-  }
-
-  // Таксама дадаем праверку па радку (карысна калі _id ў БД захаваны як string)
-  orConditions.push({ _id: storyId });
-
-  // Калі няма ўмоў — вернем 404
-  if (orConditions.length === 0) {
-    throw createHttpError(400, 'Invalid story id');
-  }
-
-  // Шукайце адзін запіс які адпавядае хаця б адной умове
   const story = await storiesCollection
-    .findOne({ $or: orConditions })
+    .findOne({ _id: storyId })
     .populate('ownerId', '_id name avatarUrl')
     .populate('category')
     .lean();
 
-  console.log('Mongoose Result:', story);
-
   if (!story) {
     throw createHttpError(404, 'Story not found');
+  }
+
+  if (story.ownerId) {
+    story.owner = story.ownerId;
+    delete story.ownerId;
   }
 
   return story;

@@ -19,14 +19,19 @@ import { upload } from '../middlewares/upload.js';
 
 const router = Router();
 
+// 1. GET /api/stories
 router.get('/', getStoriesController);
 
+// 2. GET /api/stories/saved
 router.get('/saved', authorization, getSavedStoriesController);
 
+// 3. GET /api/stories/categories
 router.get('/categories', getCategoriesController);
 
-router.get('/:id', getStoryByIdController);
+// 4. GET /api/stories/:id
+router.get('/:id', isValidId, getStoryByIdController);
 
+// 5. POST /api/stories
 router.post(
   '/',
   authorization,
@@ -35,6 +40,7 @@ router.post(
   createStoryController,
 );
 
+// 6. PATCH /api/stories/:id
 router.patch(
   '/:id',
   authorization,

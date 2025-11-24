@@ -72,10 +72,10 @@ export const createStoryController = async (req, res, next) => {
 export const getSavedStoriesController = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { page, perPage } = req.query;
+    const { page, perPage } = parsePaginationParams(req.query);
     const story = await getSavedStories(userId, page, perPage);
-
-    res.status(201).json({
+    res.status(200).json({
+      status: 200,
       message: 'Get saved stories',
       data: story,
     });
