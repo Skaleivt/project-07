@@ -56,15 +56,20 @@ export const createStoryController = async (req, res) => {
   });
 };
 
-export const getSavedStoriesController = async (req, res) => {
-  const userId = req.user._id;
-  const { page, perPage } = parsePaginationParams(req.query);
-  const story = await getSavedStories(userId, page, perPage);
-
-  res.status(200).json({
-    message: 'Get saved stories',
-    data: story,
-  });
+export const getSavedStoriesController = async (req, res, next) => {
+  // Прыняты Incoming-код з try/catch для апрацоўкі памылак
+  try {
+    const userId = req.user._id;
+    const { page, perPage } = parsePaginationParams(req.query);
+    const story = await getSavedStories(userId, page, perPage);
+    res.status(200).json({
+      status: 200,
+      message: 'Get saved stories',
+      data: story,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateStoryController = async (req, res) => {
