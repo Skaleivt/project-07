@@ -1,3 +1,4 @@
+// src/controllers/users.js
 import {
   getAllUsers,
   getUserProfile,
@@ -8,7 +9,7 @@ import {
   getUserById,
 } from '../services/users.js';
 
-// Отримати список усіх користувачів
+// Get all users list
 export const getAllUsersController = async (req, res) => {
   const { page, perPage } = req.query;
 
@@ -18,10 +19,10 @@ export const getAllUsersController = async (req, res) => {
     status: 200,
     message: 'Get all users',
     data: users,
-  });
+  }); 
 };
 
-// Отримати одного користувача + його статті
+// Get one user by ID + all their stories
 export const getUserByIdController = async (req, res) => {
   const { id } = req.params;
 
@@ -29,12 +30,12 @@ export const getUserByIdController = async (req, res) => {
 
   res.status(200).json({
     status: 200,
-    message: 'Get id user',
+    message: 'Get user by id user',
     data: user,
   });
 };
 
-// отримання даних профіля користувача
+// Get user profile
 export async function getUserProfileController(req, res) {
   const userId = req.user._id;
 
@@ -47,7 +48,7 @@ export async function getUserProfileController(req, res) {
   });
 }
 
-// Оновлення даних користувача приватний
+// Updating user data, private.
 export const updateCurrentUserController = async (req, res) => {
   const userid = req.user._id;
   const updateData = req.body;
@@ -60,7 +61,7 @@ export const updateCurrentUserController = async (req, res) => {
   });
 };
 
-// Додавання історії до збережених
+// Adding story to saved
 export async function addStoryToSavedController(req, res) {
   const { storyId } = req.body;
 
@@ -103,7 +104,7 @@ export async function removeStoryFromSavedController(req, res, next) {
   }
 }
 
-// Оновлення аватару користувача
+// Updating user avatar
 export const updateUserAvatarController = async (req, res) => {
   const userId = req.user._id;
   const user = await updateUserAvatarService({ userId, file: req.file });
