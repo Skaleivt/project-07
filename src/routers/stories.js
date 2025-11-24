@@ -1,3 +1,4 @@
+// src/routers/stories.js
 import { Router } from 'express';
 import {
   createStoryController,
@@ -44,3 +45,4 @@ router.patch(
 );
 
 export const storiesRouter = router;
+//src/routers/stories.js

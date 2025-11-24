@@ -1,3 +1,4 @@
+// src/controllers/users.js
 import {
   getAllUsers,
   getUserProfile,

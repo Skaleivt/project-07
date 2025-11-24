@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import { storiesCollection } from '../db/models/stories.js';
 import uploadToCloudinary from '../utils/uploadToCloudinary.js';
@@ -122,10 +123,38 @@ export const updateStory = async (
 };
 
 export const getStoryById = async (storyId) => {
+  // Дыягнастычны лог — пакіньце часова
+  console.log('Service Layer: Incoming ID:', storyId);
+
+  // Пабудаваць умовы для $or — пакрывем і ObjectId, і string _id
+  const orConditions = [];
+
+  // Калі радок выглядае як валідны ObjectId — дадамо адпаведны аб'ект
+  if (mongoose.isValidObjectId(storyId)) {
+    try {
+      orConditions.push({ _id: new mongoose.Types.ObjectId(storyId) });
+    } catch (e) {
+      // на ўсякі выпадак — ігнаруем памылку канвертацыі
+      console.warn('Could not convert incoming id to ObjectId:', e);
+    }
+  }
+
+  // Таксама дадаем праверку па радку (карысна калі _id ў БД захаваны як string)
+  orConditions.push({ _id: storyId });
+
+  // Калі няма ўмоў — вернем 404
+  if (orConditions.length === 0) {
+    throw createHttpError(400, 'Invalid story id');
+  }
+
+  // Шукайце адзін запіс які адпавядае хаця б адной умове
   const story = await storiesCollection
-    .findById(storyId)
+    .findOne({ $or: orConditions })
     .populate('ownerId', '_id name avatarUrl')
-    .populate('category');
+    .populate('category')
+    .lean();
+
+  console.log('Mongoose Result:', story);
 
   if (!story) {
     throw createHttpError(404, 'Story not found');
@@ -133,8 +162,4 @@ export const getStoryById = async (storyId) => {
 
   return story;
 };
-
-export const getCategories = async () => {
-  const categories = await categoriesCollection.find();
-  return categories;
-};
+//src/services/stories.js
