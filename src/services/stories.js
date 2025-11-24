@@ -67,29 +67,26 @@ export const createStory = async (img, title, article, category, userId) => {
   return story;
 };
 
-export const getSavedStories = async (userId, page = 1, perPage = 10) => {
-  const user = await UsersCollection.findById(userId)
-    .select('selectedStories')
-    .populate('ownerId')
-    .populate('category');
+export const getSavedStories = async (userId, page, perPage) => {
+  const user = await UsersCollection.findById(userId).select('selectedStories');
   const storiesId = user.selectedStories;
-  const limit = Number(perPage);
-  const skip = (page - 1) * perPage;
-  const total = storiesId.length;
 
   if (!storiesId) {
     throw createHttpError(404, 'User not found');
   }
 
+  const limit = Number(perPage);
+  const skip = (page - 1) * perPage;
+  const total = storiesId.length;
+
   const paginatedIds = storiesId.slice(skip, skip + limit);
 
-  const stories = await storiesCollection.find({
-    _id: { $in: paginatedIds },
-  });
-
-  if (!stories) {
-    throw createHttpError(404, 'User don`t have saved stories');
-  }
+  const stories = await storiesCollection
+    .find({
+      _id: { $in: paginatedIds },
+    })
+    .populate('ownerId')
+    .populate('category');
 
   const paginationData = calculatePaginationData(
     total,

@@ -13,8 +13,12 @@ import { categoriesCollection } from '../db/models/categories.js';
 export const getStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
 
-  const { sortField, sortOrder } = req.query;
+  const { sortField, sortOrder, ownerId } = req.query;
   const filter = await parseFilterCategoryParams(req.query);
+
+  if (ownerId) {
+    filter.ownerId = ownerId;
+  }
 
   const data = await getAllStories({
     page,
@@ -57,10 +61,10 @@ export const createStoryController = async (req, res) => {
 
 export const getSavedStoriesController = async (req, res) => {
   const userId = req.user._id;
-  const { page, perPage } = req.query;
+  const { page, perPage } = parsePaginationParams(req.query);
   const story = await getSavedStories(userId, page, perPage);
 
-  res.status(201).json({
+  res.status(200).json({
     message: 'Get saved stories',
     data: story,
   });
