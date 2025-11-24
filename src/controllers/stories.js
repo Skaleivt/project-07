@@ -7,14 +7,15 @@ import {
 } from '../services/stories.js';
 import { getAllStories } from '../services/stories.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
-import { parseFilterCategoryParams } from '../utils/parseFilterParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { categoriesCollection } from '../db/models/categories.js';
 
 export const getStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
 
   const { sortField, sortOrder } = req.query;
-  const filter = await parseFilterCategoryParams(req.query);
+  const filter = await parseFilterParams(req.query);
+  console.log('filter', filter);
 
   const data = await getAllStories({
     page,

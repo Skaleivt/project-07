@@ -12,11 +12,11 @@ export const parseFilterCategoryParams = async (query) => {
 };
 
 export const parseFilterOwnerParams = (query) => {
-  const { filter } = query;
-  if (!filter) return {};
+  const { ownerId } = query;
+  if (!ownerId) return {};
 
   try {
-    return { ownerId: new ObjectId(filter) };
+    return { ownerId: new ObjectId(ownerId) };
   } catch (_) {
     return {};
   }
